@@ -1,0 +1,52 @@
+---
+- name: remove customized PATH and JAVA_HOME from user profile
+  blockinfile:
+    path: /home/jenkins/.profile
+    state: absent
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    block: |
+        if [ -d /usr/local/sdkman/candidates/java/current/bin ]; then
+            PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
+            JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+        fi
+  become: yes
+
+# - name: remove agent jar
+
+- name: remove jenkins ssh authorized keys
+  file:
+    name: /etc/ssh/authorized_keys/jenkins
+    state: absent
+  become: yes
+
+- name: remove jenkins ssh user
+  user:
+    name: jenkins
+    state: absent
+    force: yes
+  become: yes
+
+- name: remove group jenkins
+  group:
+      name: jenkins
+      state: absent
+  become: yes
+
+- name: remove JAVA_HOME environment variable system-wide
+  lineinfile:
+    path: /etc/environment
+    state: absent
+    regexp: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
+  become: yes
+
+- name: remove sdkman directory
+  file:
+    name: /usr/local/sdkman
+    state: absent
+  become: yes
+
+- name: remove sdkman installer
+  file:
+    name: /usr/local/bin/sdkman-installer.sh
+    state: absent
+  become: yes

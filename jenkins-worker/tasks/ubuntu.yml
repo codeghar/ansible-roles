@@ -1,0 +1,95 @@
+---
+- name: set SDKMAN_DIR environment variable system-wide
+  lineinfile:
+    path: /etc/environment
+    state: present
+    line: SDKMAN_DIR=/usr/local/sdkman
+    regexp: "^SDKMAN_DIR=/usr/local/sdkman"
+  become: yes
+
+- name: download sdkman installer
+  get_url:
+    url: https://get.sdkman.io
+    dest: /usr/local/bin/sdkman-installer.sh
+    mode: 0755
+  become: yes
+
+- name: install unzip
+  apt:
+      name: unzip
+      state: present
+  become: yes
+
+- name: install zip
+  apt:
+      name: zip
+      state: present
+  become: yes
+
+- name: install curl
+  apt:
+      name: curl
+      state: present
+  become: yes
+
+- name: install sdkman
+  shell: /usr/local/bin/sdkman-installer.sh
+  args:
+    executable: /bin/bash
+    creates: /usr/local/sdkman/bin/sdkman-init.sh
+  environment:
+    SDKMAN_DIR: /usr/local/sdkman
+  become: yes
+
+- name: install java
+  shell: . /usr/local/sdkman/bin/sdkman-init.sh && sdk install java
+  args:
+    executable: /bin/bash
+    creates: /usr/local/sdkman/candidates/java/
+  environment:
+    SDKMAN_DIR: /usr/local/sdkman
+  become: yes
+
+- name: set JAVA_HOME environment variable system-wide
+  lineinfile:
+    path: /etc/environment
+    state: present
+    line: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
+    regexp: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
+  become: yes
+
+- name: create jenkins ssh user's group
+  group:
+    name: jenkins
+    state: present
+  become: yes
+
+- name: create jenkins ssh user
+  user:
+    name: jenkins
+    shell: /bin/bash
+    groups: jenkins
+    append: yes
+    state: present
+  become: yes
+
+- name: setup ssh public key
+  authorized_key:
+    user: jenkins
+    state: present
+    key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
+    path: /etc/ssh/authorized_keys/jenkins
+    manage_dir: no
+  become: yes
+
+- name: update customized PATH and JAVA_HOME in user profile
+  blockinfile:
+    path: /home/jenkins/.profile
+    state: present
+    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    block: |
+        if [ -d /usr/local/sdkman/candidates/java/current ]; then
+            PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
+            JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+        fi
+  become: yes
