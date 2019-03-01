@@ -1,0 +1,21 @@
+---
+- name: restart jenkins
+  systemd:
+      name: jenkins
+      state: restarted
+      daemon_reload: yes
+  notify:
+    - wait for jenkins to be up again
+  become: yes
+
+- name: wait for jenkins to be up again
+  uri:
+      url: "{{ url }}"
+      status_code: 200
+      user: "{{ admin_user }}"
+      password: "{{ admin_password }}"
+      validate_certs: "{{ validate_certs }}"
+  register: result
+  until: result.status == 200
+  retries: 60
+  delay: 1

@@ -1,0 +1,16 @@
+# https://github.com/docker/compose/issues/4266#issuecomment-302813256
+
+[Unit]
+Description=Jenkins service with docker compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+EnvironmentFile=/srv/jenkins/environment
+Restart=always
+WorkingDirectory=/srv/jenkins
+ExecStart=/usr/local/bin/docker-compose up
+ExecStop=/usr/local/bin/docker-compose down -v
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+    jenkins:
+        image: jenkins/jenkins:lts-alpine
+        environment:
+            JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+            JENKINS_LEADER_ADMIN_USER: "${JENKINS_LEADER_ADMIN_USER}"
+            JENKINS_LEADER_ADMIN_PASSWORD: "${JENKINS_LEADER_ADMIN_PASSWORD}"
+        tty: true
+        volumes:
+            - /var/jenkins_home:/var/jenkins_home:rw
+    nginx:
+        image: nginx:mainline-alpine
+        depends_on:
+            - jenkins
+        ports:
+            - 443:443
+        tty: true
+        volumes:
+            - /srv/jenkins/nginx.conf:/etc/nginx/nginx.conf:ro
+            - /srv/jenkins/certs:/etc/nginx/jenkins_certs:ro
+            - /var/jenkins_home:/var/jenkins_home:ro

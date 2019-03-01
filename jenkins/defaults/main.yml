@@ -1,0 +1,9 @@
+---
+admin_user: admin
+admin_password: IloveTObePWNED
+certificate_file: certificate.pem
+certificate_key_file: key.pem
+email: "not@configured.yet"
+undo: no
+url: "https://localhost/"
+validate_certs: yes

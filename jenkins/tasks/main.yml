@@ -1,0 +1,10 @@
+---
+- include_tasks: linux.yml
+  when:
+    - ansible_system == "Linux"
+    - undo == no
+
+- include_tasks: undo-linux.yml
+  when:
+    - ansible_system == "Linux"
+    - undo == yes
