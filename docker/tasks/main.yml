@@ -3,10 +3,10 @@
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version == "18.04"
-    - undo == no
+    - undo == false
 
 - include_tasks: undo-ubuntu.yml
   when:
     - ansible_distribution == "Ubuntu"
     - ansible_distribution_version == "18.04"
-    - undo == yes
+    - undo == true

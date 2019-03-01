@@ -17,6 +17,7 @@
 
 - name: add docker's apt signing key
   apt_key:
+      id: "0EBFCD88"
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
   become: yes

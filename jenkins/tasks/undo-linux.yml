@@ -23,7 +23,7 @@
   user:
       name: jenkins
       state: absent
-      remove: yes
+      force: yes
   become: yes
 
 - name: remove group jenkins

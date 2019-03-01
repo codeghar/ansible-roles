@@ -40,7 +40,7 @@ which contains the certificate bundle. Default value is _certificate.pem_.
 Default value is _key.pem_.
 - email - Email to configure in Jenkins. Default value is _not@configured.yet_.
 - undo - Boolean whether to undo the changes made during install. Default value
-is _no_.
+is _false_.
 - url - URL of the Jenkins leader server. Default value is _https://localhost/_.
 - validate_certs - Boolean value whether to verify TLS certificates. It is added
 so it may override the default value, _yes_, in cases where privately signed

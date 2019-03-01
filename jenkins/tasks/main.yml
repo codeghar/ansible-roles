@@ -2,9 +2,9 @@
 - include_tasks: linux.yml
   when:
     - ansible_system == "Linux"
-    - undo == no
+    - undo == false
 
 - include_tasks: undo-linux.yml
   when:
     - ansible_system == "Linux"
-    - undo == yes
+    - undo == true

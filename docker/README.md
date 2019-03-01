@@ -11,7 +11,7 @@ This role was developed and tested against Ubuntu 18.04.
 - docker_data_root - File system path where docker should be relocated.
 Default value is _/var/lib/docker_.
 - undo - Boolean whether to undo the changes made during install. Default value
-is _no_.
+is _false_.
 
 ## More Information
 
