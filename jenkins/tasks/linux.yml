@@ -1,172 +1,175 @@
 ---
 - name: create group jenkins
   group:
-      name: jenkins
-      state: present
+    name: "{{ username }}"
+    state: present
   become: yes
 
 - name: create user jenkins
   user:
-      name: jenkins
-      group: jenkins
-      shell: /bin/bash
-      append: yes
+    name: "{{ username }}"
+    group: "{{ username }}"
+    password: "{{ password }}"
+    shell: /bin/bash
+    append: yes
+    update_password: "on_create"
+    state: present
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create jenkins home directory
   file:
-      path: /var/jenkins_home
-      state: directory
-      mode: 0777
+    path: /var/jenkins_home
+    state: directory
+    mode: 0777
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create init.groovy.d directory in jenkins home
   file:
-      path: /var/jenkins_home/init.groovy.d
-      state: directory
-      mode: 0775
+    path: /var/jenkins_home/init.groovy.d
+    state: directory
+    mode: 0775
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create plugins directory in jenkins home
   file:
-      path: /var/jenkins_home/plugins
-      state: directory
-      mode: 0777
+    path: /var/jenkins_home/plugins
+    state: directory
+    mode: 0777
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy admin_user.groovy to init.groovy.d directory
   copy:
-      dest: /var/jenkins_home/init.groovy.d/admin_user.groovy
-      src: "{{ role_path }}/files/admin_user.groovy"
-      owner: root
-      group: root
-      mode: 0644
+    dest: /var/jenkins_home/init.groovy.d/admin_user.groovy
+    src: "{{ role_path }}/files/admin_user.groovy"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy csrf.groovy to init.groovy.d directory
   copy:
-      dest: /var/jenkins_home/init.groovy.d/csrf.groovy
-      src: "{{ role_path }}/files/csrf.groovy"
-      owner: root
-      group: root
-      mode: 0644
+    dest: /var/jenkins_home/init.groovy.d/csrf.groovy
+    src: "{{ role_path }}/files/csrf.groovy"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy harden.groovy to init.groovy.d directory
   copy:
-      dest: /var/jenkins_home/init.groovy.d/harden.groovy
-      src: "{{ role_path }}/files/harden.groovy"
-      owner: root
-      group: root
-      mode: 0644
+    dest: /var/jenkins_home/init.groovy.d/harden.groovy
+    src: "{{ role_path }}/files/harden.groovy"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
 
 - name: create jenkins.model.JenkinsLocationConfiguration.xml in jenkins home
   template:
-      src: jenkins.model.JenkinsLocationConfiguration.xml.j2
-      dest: /var/jenkins_home/jenkins.model.JenkinsLocationConfiguration.xml
-      owner: root
-      group: root
-      mode: 0644
+    src: jenkins.model.JenkinsLocationConfiguration.xml.j2
+    dest: /var/jenkins_home/jenkins.model.JenkinsLocationConfiguration.xml
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   notify: restart jenkins
 
 - name: create jenkins service configuration directory
   file:
-      path: /srv/jenkins
-      state: directory
-      mode: 0755
+    path: /srv/jenkins
+    state: directory
+    mode: 0755
   become: yes
 
 - name: copy docker-compose.yml to jenkins service configuration directory
   copy:
-      dest: /srv/jenkins/docker-compose.yml
-      src: "{{ role_path }}/files/docker-compose.yml"
-      owner: root
-      group: root
-      mode: 0644
+    dest: /srv/jenkins/docker-compose.yml
+    src: "{{ role_path }}/files/docker-compose.yml"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   register: docker_compose_yml
 
 - name: create environment file in jenkins service configuration directory (used by jenkins.service)
   template:
-      src: environment.j2
-      dest: /srv/jenkins/environment
-      owner: root
-      group: root
-      mode: 0640
+    src: environment.j2
+    dest: /srv/jenkins/environment
+    owner: root
+    group: root
+    mode: 0640
   become: yes
   register: environment_file
 
 - name: copy jenkins.service to systemd directory
   copy:
-      dest: /etc/systemd/system/jenkins.service
-      src: "{{ role_path }}/files/jenkins.service"
-      owner: root
-      group: root
-      mode: 0644
+    dest: /etc/systemd/system/jenkins.service
+    src: "{{ role_path }}/files/jenkins.service"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   register: jenkins_service_file
 
 - name: copy nginx.conf to jenkins service configuration directory
   template:
-      src: nginx.conf.j2
-      dest: /srv/jenkins/nginx.conf
-      owner: root
-      group: root
-      mode: 0644
+    src: nginx.conf.j2
+    dest: /srv/jenkins/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   register: nginx_conf
 
 - name: create certs directory in jenkins service configuration directory
   file:
-      path: /srv/jenkins/certs
-      state: directory
-      mode: 0755
+    path: /srv/jenkins/certs
+    state: directory
+    mode: 0755
   become: yes
 
 - name: copy chained.crt to certs directory
   copy:
-      dest: "/srv/jenkins/certs/{{ certificate_file }}"
-      src: "{{ role_path }}/files/{{ certificate_file }}"
-      owner: root
-      group: root
-      mode: 0644
+    dest: "/srv/jenkins/certs/{{ certificate_file }}"
+    src: "{{ role_path }}/files/{{ certificate_file }}"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   register: certificate_file
 
 - name: copy key.pem to certs directory
   copy:
-      dest: "/srv/jenkins/certs/{{ certificate_key_file }}"
-      src: "{{ role_path }}/files/{{ certificate_key_file }}"
-      owner: root
-      group: root
-      mode: 0644
+    dest: "/srv/jenkins/certs/{{ certificate_key_file }}"
+    src: "{{ role_path }}/files/{{ certificate_key_file }}"
+    owner: root
+    group: root
+    mode: 0644
   become: yes
   register: certificate_key_file
 
 - name: restart jenkins
   systemd:
-      name: jenkins
-      state: restarted
-      daemon_reload: yes
+    name: jenkins
+    state: restarted
+    daemon_reload: yes
   when: docker_compose_yml.changed or environment_file.changed or jenkins_service_file.changed or nginx_conf.changed or certificate_file.changed or certificate_key_file.changed
   become: yes
   register: jenkins_restart
 
 - name: wait for jenkins to be up
   uri:
-      url: "{{ url }}"
-      status_code: 200
-      user: "{{ admin_user }}"
-      password: "{{ admin_password }}"
-      validate_certs: "{{ validate_certs }}"
+    url: "{{ url }}"
+    status_code: 200
+    user: "{{ admin_user }}"
+    password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
   register: result
   until: result.status == 200
   retries: 60
@@ -175,30 +178,45 @@
 
 - name: install pipeline plugin
   jenkins_plugin:
-      name: workflow-aggregator
-      with_dependencies: yes
-      jenkins_home: /var/jenkins_home
-      url: "{{ url }}"
-      url_username: "{{ admin_user }}"
-      url_password: "{{ admin_password }}"
-      validate_certs: "{{ validate_certs }}"
-      force_basic_auth: yes
-      owner: jenkins
-      group: jenkins
+    name: workflow-aggregator
+    with_dependencies: yes
+    jenkins_home: /var/jenkins_home
+    url: "{{ url }}"
+    url_username: "{{ admin_user }}"
+    url_password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
+    force_basic_auth: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
   become: yes
   notify: restart jenkins again
 
 - name: install role-strategy plugin
   jenkins_plugin:
-      name: role-strategy
-      with_dependencies: yes
-      jenkins_home: /var/jenkins_home
-      url: "{{ url }}"
-      url_username: "{{ admin_user }}"
-      url_password: "{{ admin_password }}"
-      validate_certs: "{{ validate_certs }}"
-      force_basic_auth: yes
-      owner: jenkins
-      group: jenkins
+    name: role-strategy
+    with_dependencies: yes
+    jenkins_home: /var/jenkins_home
+    url: "{{ url }}"
+    url_username: "{{ admin_user }}"
+    url_password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
+    force_basic_auth: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  become: yes
+  notify: restart jenkins again
+
+- name: install ssh-slaves plugin
+  jenkins_plugin:
+    name: ssh-slaves
+    with_dependencies: yes
+    jenkins_home: /var/jenkins_home
+    url: "{{ url }}"
+    url_username: "{{ admin_user }}"
+    url_password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
+    force_basic_auth: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
   become: yes
   notify: restart jenkins again

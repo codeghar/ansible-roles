@@ -1,41 +1,41 @@
 ---
 - name: stop jenkins
   systemd:
-      name: jenkins
-      state: stopped
-      daemon_reload: yes
+    name: jenkins
+    state: stopped
+    daemon_reload: yes
   ignore_errors: yes
   become: yes
 
 - name: remove jenkins service configuration directory
   file:
-      path: /srv/jenkins
-      state: absent
+    path: /srv/jenkins
+    state: absent
   become: yes
 
 - name: remove jenkins home directory
   file:
-      path: /var/jenkins_home
-      state: absent
+    path: /var/jenkins_home
+    state: absent
   become: yes
 
 - name: remove user jenkins
   user:
-      name: jenkins
-      state: absent
-      force: yes
+    name: "{{ username }}"
+    state: absent
+    force: yes
   become: yes
 
 - name: remove group jenkins
   group:
-      name: jenkins
-      state: absent
+    name: "{{ username }}"
+    state: absent
   become: yes
 
 - name: remove jenkins.service from systemd directory
   file:
-      path: /etc/systemd/system/jenkins.service
-      state: absent
+    path: /etc/systemd/system/jenkins.service
+    state: absent
   become: yes
   register: jenkins_service_removed
 

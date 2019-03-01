@@ -16,20 +16,20 @@
 
 - name: install unzip
   apt:
-      name: unzip
-      state: present
+    name: unzip
+    state: present
   become: yes
 
 - name: install zip
   apt:
-      name: zip
-      state: present
+    name: zip
+    state: present
   become: yes
 
 - name: install curl
   apt:
-      name: curl
-      state: present
+    name: curl
+    state: present
   become: yes
 
 - name: install sdkman
@@ -42,7 +42,7 @@
   become: yes
 
 - name: install java
-  shell: . /usr/local/sdkman/bin/sdkman-init.sh && sdk install java
+  shell: . /usr/local/sdkman/bin/sdkman-init.sh && sdk install java "{{ java_version }}"
   args:
     executable: /bin/bash
     creates: /usr/local/sdkman/candidates/java/
@@ -50,46 +50,74 @@
     SDKMAN_DIR: /usr/local/sdkman
   become: yes
 
+# These are the places where Jenkins 2.150.3 expects to find Java
+# - /home/jenkins/jdk/bin/java
+# - /usr/bin/java
+# - /usr/java/default/bin/java
+# - /usr/java/latest/bin/java
+# - /usr/local/bin/java
+# - /usr/local/java/bin/java
+- name: create symlink /home/jenkins/jdk to the sdkman java install
+  file:
+    path: "/home/{{ username }}/jdk"
+    src: /usr/local/sdkman/candidates/java/current/
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  become: yes
+
 - name: set JAVA_HOME environment variable system-wide
   lineinfile:
     path: /etc/environment
     state: present
-    line: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
-    regexp: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
+    line: "JAVA_HOME=/usr/local/sdkman/candidates/java/current"
+    regexp: "JAVA_HOME=/usr/local/sdkman/candidates/java/current"
   become: yes
 
 - name: create jenkins ssh user's group
   group:
-    name: jenkins
+    name: "{{ username }}"
     state: present
   become: yes
 
 - name: create jenkins ssh user
   user:
-    name: jenkins
+    name: "{{ username }}"
+    groups: "{{ username }}"
+    password: "{{ password }}"
     shell: /bin/bash
-    groups: jenkins
     append: yes
+    update_password: "on_create"
     state: present
   become: yes
 
 - name: setup ssh public key
   authorized_key:
-    user: jenkins
+    user: "{{ username }}"
     state: present
     key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
-    path: /etc/ssh/authorized_keys/jenkins
+    path: "/etc/ssh/authorized_keys/{{ username }}"
     manage_dir: no
   become: yes
 
+- name: reconfigure sshd_config to add path to authorizedkeys directive
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    state: present
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /home/%u/.ssh/authorized_keys
+  become: yes
+  notify: restart sshd
+
 - name: update customized PATH and JAVA_HOME in user profile
   blockinfile:
-    path: /home/jenkins/.profile
+    path: "/home//{{ username }}.profile"
     state: present
-    marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
-        if [ -d /usr/local/sdkman/candidates/java/current ]; then
-            PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
-            JAVA_HOME="/usr/local/sdkman/candidates/java/current"
-        fi
+      if [ -d /usr/local/sdkman/candidates/java/current ]; then
+          PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
+          JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+      fi
   become: yes

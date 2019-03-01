@@ -39,9 +39,13 @@ which contains the certificate bundle. Default value is _certificate.pem_.
 - certificate_key_file - Name of file containing private key of the certificate.
 Default value is _key.pem_.
 - email - Email to configure in Jenkins. Default value is _not@configured.yet_.
+- password - Initial [crypted](https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module) password of the user. Default value is _IamInsecure_, which is not crypted on purpose.
+- server_name - FQDN of the server. Default value is _localhost_.
 - undo - Boolean whether to undo the changes made during install. Default value
 is _false_.
 - url - URL of the Jenkins leader server. Default value is _https://localhost/_.
+- username - User to create for Jenkins leader to ssh as. Default value is
+_jenkins_.
 - validate_certs - Boolean value whether to verify TLS certificates. It is added
 so it may override the default value, _yes_, in cases where privately signed
 certificates are used.

@@ -4,6 +4,9 @@ admin_password: IloveTObePWNED
 certificate_file: certificate.pem
 certificate_key_file: key.pem
 email: "not@configured.yet"
+server_name: "localhost"
 undo: false
 url: "https://localhost/"
+username: jenkins
+password: IamInsecure
 validate_certs: yes
