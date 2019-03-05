@@ -27,7 +27,16 @@ _jenkins_.
 
 ## Example Playbook
 
-First generate a [crypted password](https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module),
+Run these two required steps first:
+
+- Create ssh keys
+- Generate crypted password
+
+Create ssh keys,
+
+    $ ssh-keygen -t rsa -b 4096 -f files/key
+
+Generate a [crypted password](https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module),
 
     $ python3 -m pip install --user passlib
     $ python3 -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
@@ -36,19 +45,28 @@ First generate a [crypted password](https://docs.ansible.com/ansible/latest/refe
 
 Now pass this password to the role,
 
-    - hosts: '*'
+    - hosts: "*"
       roles:
          - role: jenkins-worker
            password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
 
 Another example where we want to use the _docker_ role (from this repo) as well,
 
-    - hosts: '*'
+    - hosts: "*"
       roles:
          - docker
          - role: jenkins-worker
            docker_installed: true
            password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+
+To undo changes made in this role, set the variable _undo_ to _true_. It may not be a wholesale clean up, leaving some
+bits behind. The reason is we want to be on the safe side most of the time.
+
+    ---
+    - hosts: "*"
+      roles:
+        - role: jenkins-worker
+          undo: true
 
 License
 -------

@@ -21,17 +21,29 @@ is _false_.
 
 ## Example Playbook
 
+Simple and default way to use this role,
+
     ---
     - hosts: "*"
       roles:
         - docker
 
+Override the path where Docker stores its files,
+
     ---
     - hosts: alt
       roles:
-        - docker
-      vars:
-        new_docker_path: /mnt/alt/store/docker
+        - role: docker
+          docker_data_root: /mnt/alt/store/docker
+
+To undo changes made in this role, set the variable _undo_ to _true_. It may not be a wholesale clean up, leaving some
+bits behind. The reason is we want to be on the safe side most of the time.
+
+    ---
+    - hosts: "*"
+      roles:
+        - role: docker
+          undo: true
 
 ## License
 
