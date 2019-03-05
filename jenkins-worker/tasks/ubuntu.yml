@@ -91,6 +91,14 @@
     state: present
   become: yes
 
+- name: add jenkins ssh user to docker group
+  user:
+    name: "{{ username }}"
+    groups: docker
+    append: yes
+  become: yes
+  when: docker_installed == true
+
 - name: setup ssh public key
   authorized_key:
     user: "{{ username }}"
