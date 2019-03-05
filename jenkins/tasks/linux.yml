@@ -154,12 +154,12 @@
   become: yes
   register: certificate_key_file
 
-- name: restart jenkins
+- name: enable jenkins
   systemd:
     name: jenkins
     enabled: true
     daemon_reload: yes
-  when: docker_compose_yml.changed or environment_file.changed or jenkins_service_file.changed or nginx_conf.changed or certificate_file.changed or certificate_key_file.changed
+  when: jenkins_service_file.changed
   become: yes
 
 - name: restart jenkins
