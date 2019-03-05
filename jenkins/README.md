@@ -14,8 +14,11 @@ performed.
 
 Installs these plugins:
 
+- blueocean
+- job-dsl
 - pipeline
 - role-strategy
+- ssh-slaves
 
 Make sure to change the password of the first admin user in the playbook.
 
