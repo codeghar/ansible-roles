@@ -120,7 +120,7 @@
 
 - name: update customized PATH and JAVA_HOME in user profile
   blockinfile:
-    path: "/home//{{ username }}.profile"
+    path: "/home/{{ username }}/.profile"
     state: present
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
