@@ -77,9 +77,8 @@ Now pass this password to the role,
     ---
     - hosts: "*"
       roles:
-        - jenkins
-      vars:
-        password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+        - role: jenkins
+          password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
 
 ## License
 

@@ -38,9 +38,17 @@ Now pass this password to the role,
 
     - hosts: '*'
       roles:
-         - "jenkins-worker"
-      vars:
-        password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+         - role: jenkins-worker
+           password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+
+Another example where we want to use the _docker_ role (from this repo) as well,
+
+    - hosts: '*'
+      roles:
+         - docker
+         - role: jenkins-worker
+           docker_installed: true
+           password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
 
 License
 -------
