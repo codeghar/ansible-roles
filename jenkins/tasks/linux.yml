@@ -157,6 +157,14 @@
 - name: restart jenkins
   systemd:
     name: jenkins
+    enabled: true
+    daemon_reload: yes
+  when: docker_compose_yml.changed or environment_file.changed or jenkins_service_file.changed or nginx_conf.changed or certificate_file.changed or certificate_key_file.changed
+  become: yes
+
+- name: restart jenkins
+  systemd:
+    name: jenkins
     state: restarted
     daemon_reload: yes
   when: docker_compose_yml.changed or environment_file.changed or jenkins_service_file.changed or nginx_conf.changed or certificate_file.changed or certificate_key_file.changed
@@ -209,6 +217,36 @@
 - name: install ssh-slaves plugin
   jenkins_plugin:
     name: ssh-slaves
+    with_dependencies: yes
+    jenkins_home: /var/jenkins_home
+    url: "{{ url }}"
+    url_username: "{{ admin_user }}"
+    url_password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
+    force_basic_auth: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  become: yes
+  notify: restart jenkins again
+
+- name: install blueocean plugin
+  jenkins_plugin:
+    name: blueocean
+    with_dependencies: yes
+    jenkins_home: /var/jenkins_home
+    url: "{{ url }}"
+    url_username: "{{ admin_user }}"
+    url_password: "{{ admin_password }}"
+    validate_certs: "{{ validate_certs }}"
+    force_basic_auth: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  become: yes
+  notify: restart jenkins again
+
+- name: install job-dsl plugin
+  jenkins_plugin:
+    name: job-dsl
     with_dependencies: yes
     jenkins_home: /var/jenkins_home
     url: "{{ url }}"
