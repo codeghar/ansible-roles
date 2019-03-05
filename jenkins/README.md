@@ -65,10 +65,21 @@ certificates are used.
 
 ## Example Playbook
 
+First generate a [crypted password](https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module),
+
+    $ python3 -m pip install --user passlib
+    $ python3 -c "from passlib.hash import sha512_crypt; import getpass; print(sha512_crypt.using(rounds=5000).hash(getpass.getpass()))"
+    Password:
+    $6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1
+
+Now pass this password to the role,
+
     ---
     - hosts: "*"
       roles:
         - jenkins
+      vars:
+        password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
 
 ## License
 
