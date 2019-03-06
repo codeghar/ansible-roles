@@ -1,5 +1,6 @@
 ---
 docker_installed: false
+install_extras: false
 java_version: "8.0.202-zulu"
 password: IamInsecure
 undo: false

@@ -1,0 +1,13 @@
+---
+- name: install pipenv
+  pip:
+    name: pipenv
+    executable: "/usr/bin/pip3"
+    state: present
+  become: yes
+
+- name: install make
+  apt:
+    name: make
+    state: present
+  become: yes
