@@ -1,0 +1,99 @@
+---
+# Source: https://www.digitalocean.com/community/tutorials/how-to-install-java-on-freebsd-10-1
+
+- name: install bash
+  pkgng:
+    name: bash
+    state: present
+  become: yes
+
+- name: install openjdk 8
+  pkgng:
+    name: openjdk8
+    state: present
+  become: yes
+
+- name: mount fdesc filesystem required by openjdk
+  mount:
+    src: fdesc
+    path: /dev/fd
+    fstype: fdescfs
+    opts: rw
+    dump: "0"
+    passno: "0"
+    state: mounted
+  become: yes
+
+- name: mount proc filesystem required by openjdk
+  mount:
+    src: proc
+    path: /proc
+    fstype: procfs
+    opts: rw,noauto
+    dump: "0"
+    passno: "0"
+    state: mounted
+  become: yes
+
+- name: create jenkins ssh user's group
+  group:
+    name: "{{ username }}"
+    state: present
+  become: yes
+
+- name: create jenkins ssh user
+  user:
+    name: "{{ username }}"
+    groups: "{{ username }}"
+    password: "{{ password }}"
+    shell: /usr/local/bin/bash
+    append: yes
+    update_password: "on_create"
+    state: present
+  become: yes
+
+# These are the places where Jenkins 2.150.3 expects to find Java
+# - /home/jenkins/jdk/bin/java
+# - /usr/bin/java
+# - /usr/java/default/bin/java
+# - /usr/java/latest/bin/java
+# - /usr/local/bin/java
+# - /usr/local/java/bin/java
+- name: create symlink /usr/home/jenkins/jdk to the java install
+  file:
+    path: "/usr/home/{{ username }}/jdk"
+    src: /usr/local/openjdk8/
+    state: link
+    owner: "{{ username }}"
+    group: "{{ username }}"
+  become: yes
+
+- name: setup ssh public key
+  authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
+    path: "/etc/ssh/authorized_keys/{{ username }}"
+    manage_dir: no
+  become: yes
+
+- name: reconfigure sshd_config to add path to authorizedkeys directive
+  blockinfile:
+    path: "/etc/ssh/sshd_config"
+    state: present
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /usr/home/%u/.ssh/authorized_keys
+  become: yes
+  notify: restart sshd freebsd
+
+- name: update customized JAVA_HOME in user profile
+  blockinfile:
+    path: "/usr/home/{{ username }}/.profile"
+    state: present
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    block: |
+      if [ -d /usr/local/openjdk8 ]; then
+          JAVA_HOME="/usr/local/openjdk8"
+      fi
+  become: yes

@@ -1,13 +1,12 @@
 ---
-- name: remove customized PATH and JAVA_HOME from user profile
+- name: update customized JAVA_HOME in user profile
   blockinfile:
-    path: "/home/{{ username }}/.profile"
+    path: "/usr/home/{{ username }}/.profile"
     state: absent
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
-      if [ -d /usr/local/sdkman/candidates/java/current/bin ]; then
-          PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
-          JAVA_HOME="/usr/local/sdkman/candidates/java/current"
+      if [ -d /usr/local/openjdk8 ]; then
+          JAVA_HOME="/usr/local/openjdk8"
       fi
   become: yes
 
@@ -38,23 +37,4 @@
     block: |
       AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /home/%u/.ssh/authorized_keys
   become: yes
-  notify: restart sshd ubuntu
-
-- name: remove JAVA_HOME environment variable system-wide
-  lineinfile:
-    path: /etc/environment
-    state: absent
-    regexp: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
-  become: yes
-
-- name: remove sdkman directory
-  file:
-    name: /usr/local/sdkman
-    state: absent
-  become: yes
-
-- name: remove sdkman installer
-  file:
-    name: /usr/local/bin/sdkman-installer.sh
-    state: absent
-  become: yes
+  notify: restart sshd freebsd

@@ -1,4 +1,29 @@
 ---
+- name: create jenkins ssh user's group
+  group:
+    name: "{{ username }}"
+    state: present
+  become: yes
+
+- name: create jenkins ssh user
+  user:
+    name: "{{ username }}"
+    groups: "{{ username }}"
+    password: "{{ password }}"
+    shell: /bin/bash
+    append: yes
+    update_password: "on_create"
+    state: present
+  become: yes
+
+- name: add jenkins ssh user to docker group
+  user:
+    name: "{{ username }}"
+    groups: docker
+    append: yes
+  become: yes
+  when: docker_installed == true
+
 - name: set SDKMAN_DIR environment variable system-wide
   lineinfile:
     path: /etc/environment
@@ -74,31 +99,6 @@
     regexp: "JAVA_HOME=/usr/local/sdkman/candidates/java/current"
   become: yes
 
-- name: create jenkins ssh user's group
-  group:
-    name: "{{ username }}"
-    state: present
-  become: yes
-
-- name: create jenkins ssh user
-  user:
-    name: "{{ username }}"
-    groups: "{{ username }}"
-    password: "{{ password }}"
-    shell: /bin/bash
-    append: yes
-    update_password: "on_create"
-    state: present
-  become: yes
-
-- name: add jenkins ssh user to docker group
-  user:
-    name: "{{ username }}"
-    groups: docker
-    append: yes
-  become: yes
-  when: docker_installed == true
-
 - name: setup ssh public key
   authorized_key:
     user: "{{ username }}"
@@ -116,7 +116,7 @@
     block: |
       AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /home/%u/.ssh/authorized_keys
   become: yes
-  notify: restart sshd
+  notify: restart sshd ubuntu
 
 - name: update customized PATH and JAVA_HOME in user profile
   blockinfile:

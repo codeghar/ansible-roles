@@ -2,13 +2,16 @@
 
 Prepare a worker node to connect with Jenkins.
 
-A worker requires Java to be installed. I use SDKMAN to manage the JRE
-installed on the worker.
+A worker requires Java to be installed.
+
+I use SDKMAN to manage the JDK installed on the Ubuntu worker.
 
 - https://sdkman.io/
 - https://github.com/Comcast/ansible-sdkman/
 
-This role was developed and tested against Ubuntu 18.04.
+On FreeBSD I use ``pkg`` to install JDK.
+
+This role was developed and tested against Ubuntu 18.04 and FreeBSD 11.2.
 
 ## Requirements
 
@@ -59,6 +62,16 @@ Another example where we want to use the _docker_ role (from this repo) as well,
          - role: jenkins-worker
            docker_installed: true
            password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+
+A third example where we want to install extras as well,
+
+    - hosts: "*"
+      roles:
+         - docker
+         - role: jenkins-worker
+           docker_installed: true
+           password: "$6$ebcDFuwHyR/D/SRP$r3nVDhepbjLEKkSkQxi2gDApd9Yitj3XRm1cUdTf88V0DIZCHnf22HRorSDund7xUlDeAXX8MJECDjSZ4ZOCD1"
+           install_extras: true
 
 To undo changes made in this role, set the variable _undo_ to _true_. It may not be a wholesale clean up, leaving some
 bits behind. The reason is we want to be on the safe side most of the time.
