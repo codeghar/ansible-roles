@@ -1,0 +1,82 @@
+---
+- name: stop unifi service
+  systemd:
+    name: unifi
+    state: stopped
+  become: yes
+
+- name: uninstall unifi
+  apt:
+    name: unifi
+    state: absent
+  become: yes
+
+- name: remove unifi repo
+  apt_repository:
+    repo: deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti
+    filename: 100-ubnt-unifi
+    state: absent
+  become: yes
+
+- name: remove unifi apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ unifi_apt_key_id }}"
+    state: absent
+  become: yes
+
+- name: stop mongodb service
+  systemd:
+    name: mongod
+    state: stopped
+  become: yes
+  when:
+    - ansible_distribution_version == "18.04"
+
+- name: stop mongodb service
+  systemd:
+    name: mongodb
+    state: stopped
+  become: yes
+  when:
+    - ansible_distribution_version == "16.04"
+
+- name: uninstall mongodb
+  apt:
+    name: mongodb-org
+    state: absent
+  become: yes
+  when:
+    - ansible_distribution_version == "18.04"
+
+- name: remove mongodb repo
+  apt_repository:
+    filename: 099-mongodb-org-server
+    state: absent
+  become: yes
+  when:
+    - ansible_distribution_version == "18.04"
+
+- name: remove mongodb apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ mongodb_apt_key_id }}"
+    state: absent
+  become: yes
+  when:
+    - ansible_distribution_version == "18.04"
+
+# # Keeping this commented out for Ubuntu 16.04 in case MongoDB is used for some other
+# # purposes but you don't want to enable it either
+# # Better to be safe
+# # But keeping it in source as a reminder that this is a possible action
+# - name: enable mongodb service
+#   systemd:
+#     name: mongodb
+#     enabled: yes
+#   become: yes
+#   notify:
+#     - restart ubuntu server
+#     - wait for ubuntu to restart
+#   when:
+#     - ansible_distribution_version == "16.04"
