@@ -1,0 +1,69 @@
+---
+- name: add mongodb apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ mongodb_apt_key_id }}"
+    state: present
+  register: add_mongodb_apt_key
+  become: yes
+
+- name: add mongodb repo
+  apt_repository:
+    repo: "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse"
+    filename: 099-mongodb-org-server
+    state: present
+  register: add_mongodb_repo
+  become: yes
+
+- name: add unifi apt key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: "{{ unifi_apt_key_id }}"
+    state: present
+  register: add_unifi_apt_key
+  become: yes
+
+- name: update repositories cache
+  apt:
+    update_cache: yes
+  become: yes
+  when: add_mongodb_apt_key.changed or add_mongodb_repo.changed or add_unifi_apt_key.changed
+
+- name: install mongodb-org
+  apt:
+    name: mongodb-org
+    state: present
+  become: yes
+
+- name: get unifi installer
+  get_url:
+    url: "https://dl.ubnt.com/unifi/{{ unifi_version }}/unifi_sysvinit_all.deb"
+    dest: /tmp/unifi_sysvinit_all.deb
+
+- name: install unifi
+  apt:
+    # name: unifi
+    deb: /tmp/unifi_sysvinit_all.deb
+    state: present
+  become: yes
+
+- name: enable unifi service
+  systemd:
+    name: unifi
+    enabled: yes
+  become: yes
+
+- name: stop mongodb service
+  systemd:
+    name: mongod
+    state: stopped
+  become: yes
+
+- name: disable mongodb service
+  systemd:
+    name: mongod
+    enabled: no
+  become: yes
+  notify:
+    - restart ubuntu
+    - wait for ubuntu to restart
