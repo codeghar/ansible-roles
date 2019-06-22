@@ -47,6 +47,35 @@
     state: present
   become: yes
 
+- name: reduce java xms in properties on raspberry pi 3
+  lineinfile:
+    path: /var/lib/unifi/system.properties
+    state: present
+    line: "unifi.xms=64"
+    regexp: "unifi.xms=64"
+  become: yes
+  when:
+    - ansible_architecture == "aarch64"
+
+- name: reduce java xmx in properties on raspberry pi 3
+  lineinfile:
+    path: /var/lib/unifi/system.properties
+    state: present
+    line: "unifi.xmx=64"
+    regexp: "unifi.xmx=64"
+  become: yes
+  when:
+    - ansible_architecture == "aarch64"
+
+- name: reduce java max heap size in init script on raspberry pi 3
+  replace:
+    path: /usr/lib/unifi/bin/unifi.init
+    regexp: "JVM_MAX_HEAP_SIZE=1024M"
+    replace: "JVM_MAX_HEAP_SIZE=64M"
+  become: yes
+  when:
+    - ansible_architecture == "aarch64"
+
 - name: enable unifi service
   systemd:
     name: unifi

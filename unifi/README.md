@@ -13,12 +13,10 @@ Issues I ran into when installing on Raspberry Pi,
 
 - On Raspberry Pi 2 Model B+ (armv7l), can't install MongoDB on Ubuntu 18.04
 because MongoDB does not support 32-bit.
-- On Raspberry Pi 3 Model B+ (aarch64), use Ubuntu 18.04 64-bit so MongoDB can
-be installed.
-- On Raspberry Pi 3 Model B+ (aarch64), could not install Unifi controller from
-repo. Ansible errored out with _No package matching 'unifi' is available_. The
-workaround I used was to download the deb package and install it from local
-file system.
+- On Raspberry Pi 3 Model B+ (aarch64),
+    - Use Ubuntu 18.04 64-bit so MongoDB can be installed.
+    - Could not install Unifi controller from repo. Ansible errored out with _No package matching 'unifi' is available_. The workaround I used was to download the deb package and install it from local file system.
+    - Had to reduce the Java memory footprint by reducing xms and xmx values.
 
 More information,
 
