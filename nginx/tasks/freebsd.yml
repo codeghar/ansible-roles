@@ -1,0 +1,63 @@
+---
+- name: Installs nginx web server
+  pkgng:
+    name: nginx
+    state: present
+  become: yes
+
+- name: Enable nginx
+  command: sysrc nginx_enable="YES"
+  become: yes
+
+- name: Add text/x-rst mime type
+  lineinfile:
+    name: /usr/local/etc/nginx/mime.types
+    line: '    text/x-rst                                      rst;'
+    regexp: 'text/x-rst'
+    insertbefore: '^}'
+    state: present
+  become: yes
+
+- name: Add text/markdown mime type
+  lineinfile:
+    name: /usr/local/etc/nginx/mime.types
+    line: '    text/markdown                                    md;'
+    regexp: 'text/markdown'
+    insertbefore: '^}'
+    state: present
+  become: yes
+
+- name: Append to text/plain mime type
+  lineinfile:
+    name: /usr/local/etc/nginx/mime.types
+    line: '    text/plain                                       txt log Dockerfile;'
+    regexp: '    text/plain                                       txt'
+    state: present
+  become: yes
+
+- name: create nginx conf.d dir
+  file:
+    path: /usr/local/etc/nginx/conf.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: wheel
+  become: yes
+
+- name: copy nginx.conf template
+  template:
+    src: nginx.conf.j2
+    dest: /usr/local/etc/nginx/nginx.conf
+    owner: root
+    group: wheel
+    mode: "u=rw,g=r,o=r"
+    backup: yes
+  register: nginx_conf_update
+  become: yes
+
+- name: start nginx
+  service:
+    name: nginx
+    state: started
+  when: nginx_conf_update.changed
+  become: yes
