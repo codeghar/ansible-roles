@@ -1,0 +1,68 @@
+---
+- name: installs certbot
+  pkgng:
+    name: py36-certbot
+    state: present
+  become: yes
+
+- name: crontab set shell
+  cron:
+    name: SHELL
+    env: yes
+    value: /bin/sh
+  become: yes
+
+- name: crontab set path
+  cron:
+    name: PATH
+    env: yes
+    value: /etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+    insertafter: SHELL
+  become: yes
+
+- name: enable certbot renew cron job
+  cron:
+    name: certbot renew
+    job: certbot renew
+    weekday: "{{ cron_weekday }}"
+    hour: "{{ cron_hour }}"
+    minute: "{{ cron_minute }}"
+  become: yes
+
+- name: create directory /usr/local/etc/newsyslog.conf.d/
+  file:
+    path: /usr/local/etc/newsyslog.conf.d/
+    state: directory
+    mode: 0755
+    owner: root
+    group: wheel
+  become: yes
+
+- name: configure certbot log rotation
+  copy:
+    src: files/newsyslog.certbot.conf
+    dest: /usr/local/etc/newsyslog.conf.d/certbot.conf
+    owner: root
+    group: wheel
+    mode: 0644
+  become: yes
+
+- name: create directory /usr/local/etc/letsencrypt/renewal-hooks/deploy/
+  file:
+    path: /usr/local/etc/letsencrypt/renewal-hooks/deploy/
+    state: directory
+    mode: 0755
+    owner: root
+    group: wheel
+  become: yes
+
+- name: configure certbot renewal hook to reload nginx
+  copy:
+    src: files/01-reload-nginx
+    dest: /usr/local/etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
+    owner: root
+    group: wheel
+    mode: 0755
+  become: yes
+  when:
+    - nginx == true
