@@ -5,6 +5,10 @@ Supports reloading nginx with a renewal hook.
 
 This role was developed and tested against FreeBSD 12.0-RELEASE.
 
+Supported operating systems:
+
+- FreeBSD
+
 More information,
 
 - https://www.freebsd.org/doc/handbook/configtuning-syslog.html

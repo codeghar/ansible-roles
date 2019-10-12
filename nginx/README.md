@@ -3,7 +3,7 @@
 Install and configure nginx. This role was developed and tested against
 FreeBSD 12.0-RELEASE.
 
-Support operating systems:
+Supported operating systems:
 
 - FreeBSD
 

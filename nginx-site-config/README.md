@@ -10,7 +10,7 @@ Encrypt certificate is not present. It attempts to create a certificate with
 I broke the nginx work into three roles to make then smaller and more targeted.
 This role was developed and tested against FreeBSD 12.0-RELEASE.
 
-Support operating systems:
+Supported operating systems:
 
 - FreeBSD
 
@@ -28,9 +28,8 @@ and **must** be changed in the playbook.
 Default value is _false_.
 - default_file_type: String to set the default file type in nginx. Default
 value is _text/html_.
-- domain_name - String that contains the domain name. For example,
-codeghar.com. Default value is _CHANGEME.com_ and **must** be changed in the
-playbook.
+- domain_name - String that contains the domain name. Default value is
+_CHANGEME.com_ and **must** be changed in the playbook.
 - index_pages - String that contains a space separated list of pages to
 consider as an
 [index page](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/#root).
@@ -49,12 +48,10 @@ and **must** be changed in the playbook.
 
     - hosts: "*"
       roles:
-        - {
-            role: nginx-conf,
-            admin_email: something@example.com,
-            domain_name: example.com,
-            web_root: /var/www/example.com,
-        }
+        - role: nginx-conf
+          admin_email: something@example.com
+          domain_name: example.com
+          web_root: /var/www/example.com
 
 License
 -------

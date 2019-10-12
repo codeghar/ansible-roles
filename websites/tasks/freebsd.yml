@@ -1,0 +1,19 @@
+---
+- name: push {{ domain_name }} contents
+  synchronize:
+    src: "{{ contents_path }}"
+    dest: "/var/www/{{ domain_name }}/"
+    mode: push
+    recursive: yes
+    perms: no
+  become: yes
+
+- name: fix perms on {{ domain_name }} contents dir
+  file:
+    path: "/var/www/{{ domain_name }}"
+    state: directory
+    mode: 0755
+    owner: www
+    group: www
+    recurse: yes
+  become: yes
