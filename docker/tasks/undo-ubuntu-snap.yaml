@@ -1,0 +1,18 @@
+---
+- name: remove docker snap
+  snap:
+    name:
+      - docker
+    state: absent
+  become: yes
+
+- name: remove directory for docker config override
+  file:
+    path: /etc/systemd/system/snap.docker.dockerd.d
+    state: absent
+  become: yes
+# Cannot remove user from a single group using Ansible
+# Bug is still open (as of 20019-01-10)
+# https://github.com/ansible/ansible/issues/11024
+# Therefore, undo _does not_ change the user's groups or remove the docker group
+# You _must_ do it manually as needed

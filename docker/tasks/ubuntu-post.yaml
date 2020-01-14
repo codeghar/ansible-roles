@@ -1,0 +1,13 @@
+---
+- name: install python3-pip
+  apt:
+    name: python3-pip
+    state: present
+  become: yes
+
+- name: install docker-compose
+  pip:
+    name: docker-compose
+    executable: "/usr/bin/pip3"
+    state: present
+  become: yes
