@@ -23,7 +23,7 @@
 - name: enable certbot renew cron job
   cron:
     name: certbot renew
-    job: certbot renew
+    job: certbot renew --deploy-hook /usr/local/etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
     weekday: "{{ cron_weekday }}"
     hour: "{{ cron_hour }}"
     minute: "{{ cron_minute }}"
