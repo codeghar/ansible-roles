@@ -1,5 +1,5 @@
 ---
 cron_hour: "14"
 cron_minute: "14"
-cron_weekday: "Tue,Thu"
+cron_weekday: "Tue,Fri"
 nginx: true

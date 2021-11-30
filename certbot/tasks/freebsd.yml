@@ -1,7 +1,7 @@
 ---
 - name: installs certbot
   pkgng:
-    name: py36-certbot
+    name: py38-certbot
     state: present
   become: yes
 
