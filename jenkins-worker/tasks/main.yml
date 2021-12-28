@@ -2,13 +2,13 @@
 - include_tasks: ubuntu.yml
   when:
     - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_distribution_version == "18.04" or ansible_distribution_version == "20.04"
     - undo == false
 
 - include_tasks: ubuntu-extras.yml
   when:
     - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_distribution_version == "18.04" or ansible_distribution_version == "20.04"
     - undo == false
     - install_extras == true
 
@@ -26,7 +26,7 @@
 - include_tasks: undo-ubuntu.yml
   when:
     - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_distribution_version == "18.04" or ansible_distribution_version == "20.04"
     - undo == true
 
 - include_tasks: freebsd-undo.yml
