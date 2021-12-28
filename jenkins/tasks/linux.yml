@@ -1,12 +1,12 @@
 ---
 - name: create group jenkins
-  group:
+  ansible.builtin.group:
     name: "{{ username }}"
     state: present
   become: yes
 
 - name: create user jenkins
-  user:
+  ansible.builtin.user:
     name: "{{ username }}"
     group: "{{ username }}"
     password: "{{ password }}"
@@ -18,7 +18,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create jenkins home directory
-  file:
+  ansible.builtin.file:
     path: /var/jenkins_home
     state: directory
     mode: 0777
@@ -26,7 +26,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create init.groovy.d directory in jenkins home
-  file:
+  ansible.builtin.file:
     path: /var/jenkins_home/init.groovy.d
     state: directory
     mode: 0775
@@ -34,7 +34,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create plugins directory in jenkins home
-  file:
+  ansible.builtin.file:
     path: /var/jenkins_home/plugins
     state: directory
     mode: 0777
@@ -42,7 +42,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy admin_user.groovy to init.groovy.d directory
-  copy:
+  ansible.builtin.copy:
     dest: /var/jenkins_home/init.groovy.d/admin_user.groovy
     src: "{{ role_path }}/files/admin_user.groovy"
     owner: root
@@ -52,7 +52,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy csrf.groovy to init.groovy.d directory
-  copy:
+  ansible.builtin.copy:
     dest: /var/jenkins_home/init.groovy.d/csrf.groovy
     src: "{{ role_path }}/files/csrf.groovy"
     owner: root
@@ -62,7 +62,7 @@
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy harden.groovy to init.groovy.d directory
-  copy:
+  ansible.builtin.copy:
     dest: /var/jenkins_home/init.groovy.d/harden.groovy
     src: "{{ role_path }}/files/harden.groovy"
     owner: root
@@ -71,7 +71,7 @@
   become: yes
 
 - name: create jenkins.model.JenkinsLocationConfiguration.xml in jenkins home
-  template:
+  ansible.builtin.template:
     src: jenkins.model.JenkinsLocationConfiguration.xml.j2
     dest: /var/jenkins_home/jenkins.model.JenkinsLocationConfiguration.xml
     owner: root
@@ -81,14 +81,14 @@
   notify: restart jenkins
 
 - name: create jenkins service configuration directory
-  file:
+  ansible.builtin.file:
     path: /srv/jenkins
     state: directory
     mode: 0755
   become: yes
 
 - name: copy docker-compose.yml to jenkins service configuration directory
-  copy:
+  ansible.builtin.copy:
     dest: /srv/jenkins/docker-compose.yml
     src: "{{ role_path }}/files/docker-compose.yml"
     owner: root
@@ -98,7 +98,7 @@
   register: docker_compose_yml
 
 - name: create environment file in jenkins service configuration directory (used by jenkins.service)
-  template:
+  ansible.builtin.template:
     src: environment.j2
     dest: /srv/jenkins/environment
     owner: root
@@ -108,7 +108,7 @@
   register: environment_file
 
 - name: copy jenkins.service to systemd directory
-  copy:
+  ansible.builtin.copy:
     dest: /etc/systemd/system/jenkins.service
     src: "{{ role_path }}/files/jenkins.service"
     owner: root
@@ -118,7 +118,7 @@
   register: jenkins_service_file
 
 - name: copy nginx.conf to jenkins service configuration directory
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: /srv/jenkins/nginx.conf
     owner: root
@@ -128,14 +128,14 @@
   register: nginx_conf
 
 - name: create certs directory in jenkins service configuration directory
-  file:
+  ansible.builtin.file:
     path: /srv/jenkins/certs
     state: directory
     mode: 0755
   become: yes
 
 - name: copy chained.crt to certs directory
-  copy:
+  ansible.builtin.copy:
     dest: "/srv/jenkins/certs/{{ certificate_file }}"
     src: "{{ role_path }}/files/{{ certificate_file }}"
     owner: root
@@ -145,7 +145,7 @@
   register: certificate_file
 
 - name: copy key.pem to certs directory
-  copy:
+  ansible.builtin.copy:
     dest: "/srv/jenkins/certs/{{ certificate_key_file }}"
     src: "{{ role_path }}/files/{{ certificate_key_file }}"
     owner: root
@@ -155,7 +155,7 @@
   register: certificate_key_file
 
 - name: enable jenkins
-  systemd:
+  ansible.builtin.systemd:
     name: jenkins
     enabled: true
     daemon_reload: yes
@@ -163,7 +163,7 @@
   become: yes
 
 - name: restart jenkins
-  systemd:
+  ansible.builtin.systemd:
     name: jenkins
     state: restarted
     daemon_reload: yes
@@ -172,7 +172,7 @@
   register: jenkins_restart
 
 - name: wait for jenkins to be up
-  uri:
+  ansible.builtin.uri:
     url: "{{ url }}"
     status_code: 200
     user: "{{ admin_user }}"
@@ -185,7 +185,7 @@
   when: jenkins_restart.changed
 
 - name: install pipeline plugin
-  jenkins_plugin:
+  community.general.jenkins_plugin:
     name: workflow-aggregator
     with_dependencies: yes
     jenkins_home: /var/jenkins_home
@@ -200,7 +200,7 @@
   notify: restart jenkins again
 
 - name: install role-strategy plugin
-  jenkins_plugin:
+  community.general.jenkins_plugin:
     name: role-strategy
     with_dependencies: yes
     jenkins_home: /var/jenkins_home
@@ -215,7 +215,7 @@
   notify: restart jenkins again
 
 - name: install ssh-slaves plugin
-  jenkins_plugin:
+  community.general.jenkins_plugin:
     name: ssh-slaves
     with_dependencies: yes
     jenkins_home: /var/jenkins_home
@@ -230,7 +230,7 @@
   notify: restart jenkins again
 
 - name: install blueocean plugin
-  jenkins_plugin:
+  community.general.jenkins_plugin:
     name: blueocean
     with_dependencies: yes
     jenkins_home: /var/jenkins_home
@@ -245,7 +245,7 @@
   notify: restart jenkins again
 
 - name: install job-dsl plugin
-  jenkins_plugin:
+  community.general.jenkins_plugin:
     name: job-dsl
     with_dependencies: yes
     jenkins_home: /var/jenkins_home

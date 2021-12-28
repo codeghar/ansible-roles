@@ -2,19 +2,19 @@
 # Source: https://www.digitalocean.com/community/tutorials/how-to-install-java-on-freebsd-10-1
 
 - name: install bash
-  pkgng:
+  community.general.pkgng:
     name: bash
     state: present
   become: yes
 
 - name: install openjdk 8
-  pkgng:
+  community.general.pkgng:
     name: openjdk8
     state: present
   become: yes
 
 - name: mount fdesc filesystem required by openjdk
-  mount:
+  ansible.posix.mount:
     src: fdesc
     path: /dev/fd
     fstype: fdescfs
@@ -25,7 +25,7 @@
   become: yes
 
 - name: mount proc filesystem required by openjdk
-  mount:
+  ansible.posix.mount:
     src: proc
     path: /proc
     fstype: procfs
@@ -36,13 +36,13 @@
   become: yes
 
 - name: create jenkins ssh user's group
-  group:
+  ansible.builtin.group:
     name: "{{ username }}"
     state: present
   become: yes
 
 - name: create jenkins ssh user
-  user:
+  ansible.builtin.user:
     name: "{{ username }}"
     groups: "{{ username }}"
     password: "{{ password }}"
@@ -60,7 +60,7 @@
 # - /usr/local/bin/java
 # - /usr/local/java/bin/java
 - name: create symlink /usr/home/jenkins/jdk to the java install
-  file:
+  ansible.builtin.file:
     path: "/usr/home/{{ username }}/jdk"
     src: /usr/local/openjdk8/
     state: link
@@ -69,7 +69,7 @@
   become: yes
 
 - name: setup ssh public key
-  authorized_key:
+  ansible.posix.authorized_key:
     user: "{{ username }}"
     state: present
     key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
@@ -78,7 +78,7 @@
   become: yes
 
 - name: reconfigure sshd_config to add path to authorizedkeys directive
-  blockinfile:
+  ansible.builtin.blockinfile::
     path: "/etc/ssh/sshd_config"
     state: present
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
@@ -88,7 +88,7 @@
   notify: restart sshd freebsd
 
 - name: update customized JAVA_HOME in user profile
-  blockinfile:
+  ansible.builtin.blockinfile::
     path: "/usr/home/{{ username }}/.profile"
     state: present
     marker: "# {mark} ANSIBLE MANAGED BLOCK"

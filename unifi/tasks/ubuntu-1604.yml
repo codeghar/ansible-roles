@@ -1,6 +1,6 @@
 ---
 - name: add unifi apt key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ unifi_apt_key_id }}"
     state: present
@@ -8,7 +8,7 @@
   become: yes
 
 - name: add unifi repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti
     filename: 100-ubnt-unifi
     state: present
@@ -16,37 +16,37 @@
   become: yes
 
 - name: update repositories cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
   become: yes
   when: add_unifi_apt_key.changed or add_unifi_repo.changed
 
 - name: install openjdk-8-jre-headless
-  apt:
+  ansible.builtin.apt:
     name: openjdk-8-jre-headless
     state: present
   become: yes
 
 - name: install unifi
-  apt:
+  ansible.builtin.apt:
     name: unifi
     state: present
   become: yes
 
 - name: enable unifi service
-  systemd:
+  ansible.builtin.systemd:
     name: unifi
     enabled: yes
   become: yes
 
 - name: stop mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongodb
     state: stopped
   become: yes
 
 - name: disable mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongodb
     enabled: no
   become: yes

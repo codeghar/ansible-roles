@@ -1,13 +1,13 @@
 ---
 - name: remove docker snap
-  snap:
+  community.general.snap:
     name:
       - docker
     state: absent
   become: yes
 
 - name: remove directory for docker config override
-  file:
+  ansible.builtin.file:
     path: /etc/systemd/system/snap.docker.dockerd.d
     state: absent
   become: yes

@@ -1,6 +1,6 @@
 ---
 - name: add mongodb apt key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ mongodb_apt_key_id }}"
     state: present
@@ -8,7 +8,7 @@
   become: yes
 
 - name: add mongodb repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse"
     filename: 099-mongodb-org-server
     state: present
@@ -16,7 +16,7 @@
   become: yes
 
 - name: add unifi apt key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ unifi_apt_key_id }}"
     state: present
@@ -24,31 +24,31 @@
   become: yes
 
 - name: update repositories cache
-  apt:
+  ansible.builtin.apt:
     update_cache: yes
   become: yes
   when: add_mongodb_apt_key.changed or add_mongodb_repo.changed or add_unifi_apt_key.changed
 
 - name: install mongodb-org
-  apt:
+  ansible.builtin.apt:
     name: mongodb-org
     state: present
   become: yes
 
 - name: get unifi installer
-  get_url:
+  ansible.builtin.get_url:
     url: "https://dl.ubnt.com/unifi/{{ unifi_version }}/unifi_sysvinit_all.deb"
     dest: /tmp/unifi_sysvinit_all.deb
 
 - name: install unifi
-  apt:
+  ansible.builtin.apt:
     # name: unifi
     deb: /tmp/unifi_sysvinit_all.deb
     state: present
   become: yes
 
 - name: reduce java xms in properties on raspberry pi 3
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /var/lib/unifi/system.properties
     state: present
     line: "unifi.xms=64"
@@ -58,7 +58,7 @@
     - ansible_architecture == "aarch64"
 
 - name: reduce java xmx in properties on raspberry pi 3
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /var/lib/unifi/system.properties
     state: present
     line: "unifi.xmx=64"
@@ -68,7 +68,7 @@
     - ansible_architecture == "aarch64"
 
 - name: reduce java max heap size in init script on raspberry pi 3
-  replace:
+  ansible.builtin.replace:
     path: /usr/lib/unifi/bin/unifi.init
     regexp: "JVM_MAX_HEAP_SIZE=1024M"
     replace: "JVM_MAX_HEAP_SIZE=64M"
@@ -77,19 +77,19 @@
     - ansible_architecture == "aarch64"
 
 - name: enable unifi service
-  systemd:
+  ansible.builtin.systemd:
     name: unifi
     enabled: yes
   become: yes
 
 - name: stop mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongod
     state: stopped
   become: yes
 
 - name: disable mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongod
     enabled: no
   become: yes

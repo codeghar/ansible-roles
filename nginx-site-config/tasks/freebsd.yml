@@ -1,6 +1,6 @@
 ---
 - name: create site contents dir
-  file:
+  ansible.builtin.file:
     path: /var/www/{{ domain_name }}
     state: directory
     mode: 0755
@@ -9,7 +9,7 @@
   become: yes
 
 - name: find cert status
-  shell: "ls /usr/local/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+  ansible.builtin.shell: "ls /usr/local/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
   register: cert_status
   ignore_errors: true
   become: yes
@@ -25,7 +25,7 @@
   when: "cert_status.rc|int != 0"
 
 - name: copy site config file
-  template:
+  ansible.builtin.template:
     src: domain.tld.conf.j2
     dest: /usr/local/etc/nginx/conf.d/{{ domain_name }}.conf
     owner: root
@@ -36,12 +36,12 @@
   become: yes
 
 - name: reload nginx config
-  shell: nginx -s reload
+  ansible.builtin.shell: nginx -s reload
   when: site_config_copied.changed
   become: yes
 
 - name: install lets encrypt certificate
-  command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ web_root }} -d {{ domain_name }} -d www.{{ domain_name }}
+  ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ web_root }} -d {{ domain_name }} -d www.{{ domain_name }}
   register: certbot_install
   changed_when: "'no action taken' not in certbot_install.stdout or 'Congratulations' in certbot_install.stdout"
   notify:
@@ -54,7 +54,7 @@
   when: certbot_install.changed
 
 - name: copy site config file
-  template:
+  ansible.builtin.template:
     src: domain.tld.conf.j2
     dest: /usr/local/etc/nginx/conf.d/{{ domain_name }}.conf
     owner: root
@@ -66,6 +66,6 @@
   become: yes
 
 - name: reload nginx config
-  shell: nginx -s reload
+  ansible.builtin.shell: nginx -s reload
   when: site_config_copied_2.changed
   become: yes
