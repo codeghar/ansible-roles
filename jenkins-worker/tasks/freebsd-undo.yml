@@ -1,6 +1,6 @@
 ---
 - name: update customized JAVA_HOME in user profile
-  ansible.builtin.blockinfile::
+  ansible.builtin.blockinfile:
     path: "/usr/home/{{ username }}/.profile"
     state: absent
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
@@ -30,7 +30,7 @@
   become: yes
 
 - name: reconfigure sshd_config to remove path to authorizedkeys directive
-  ansible.builtin.blockinfile::
+  ansible.builtin.blockinfile:
     path: "/etc/ssh/sshd_config"
     state: absent
     marker: "# {mark} ANSIBLE MANAGED BLOCK"

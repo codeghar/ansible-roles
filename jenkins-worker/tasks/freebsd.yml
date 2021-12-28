@@ -78,7 +78,7 @@
   become: yes
 
 - name: reconfigure sshd_config to add path to authorizedkeys directive
-  ansible.builtin.blockinfile::
+  ansible.builtin.blockinfile:
     path: "/etc/ssh/sshd_config"
     state: present
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
@@ -88,7 +88,7 @@
   notify: restart sshd freebsd
 
 - name: update customized JAVA_HOME in user profile
-  ansible.builtin.blockinfile::
+  ansible.builtin.blockinfile:
     path: "/usr/home/{{ username }}/.profile"
     state: present
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
