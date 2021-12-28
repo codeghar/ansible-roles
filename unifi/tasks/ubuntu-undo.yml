@@ -1,32 +1,32 @@
 ---
 - name: stop unifi service
-  systemd:
+  ansible.builtin.systemd:
     name: unifi
     state: stopped
   become: yes
 
 - name: uninstall unifi
-  apt:
+  ansible.builtin.apt:
     name: unifi
     state: absent
   become: yes
 
 - name: remove unifi repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     repo: deb http://www.ubnt.com/downloads/unifi/debian stable ubiquiti
     filename: 100-ubnt-unifi
     state: absent
   become: yes
 
 - name: remove unifi apt key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ unifi_apt_key_id }}"
     state: absent
   become: yes
 
 - name: stop mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongod
     state: stopped
   become: yes
@@ -34,7 +34,7 @@
     - ansible_distribution_version == "18.04"
 
 - name: stop mongodb service
-  systemd:
+  ansible.builtin.systemd:
     name: mongodb
     state: stopped
   become: yes
@@ -42,7 +42,7 @@
     - ansible_distribution_version == "16.04"
 
 - name: uninstall mongodb
-  apt:
+  ansible.builtin.apt:
     name: mongodb-org
     state: absent
   become: yes
@@ -50,7 +50,7 @@
     - ansible_distribution_version == "18.04"
 
 - name: remove mongodb repo
-  apt_repository:
+  ansible.builtin.apt_repository:
     filename: 099-mongodb-org-server
     state: absent
   become: yes
@@ -58,7 +58,7 @@
     - ansible_distribution_version == "18.04"
 
 - name: remove mongodb apt key
-  apt_key:
+  ansible.builtin.apt_key:
     keyserver: keyserver.ubuntu.com
     id: "{{ mongodb_apt_key_id }}"
     state: absent

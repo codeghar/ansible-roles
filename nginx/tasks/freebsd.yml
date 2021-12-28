@@ -1,16 +1,16 @@
 ---
 - name: Installs nginx web server
-  pkgng:
+  community.general.pkgng:
     name: nginx
     state: present
   become: yes
 
 - name: Enable nginx
-  command: sysrc nginx_enable="YES"
+  ansible.builtin.command: sysrc nginx_enable="YES"
   become: yes
 
 - name: Add text/x-rst mime type
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: /usr/local/etc/nginx/mime.types
     line: '    text/x-rst                                      rst;'
     regexp: 'text/x-rst'
@@ -19,7 +19,7 @@
   become: yes
 
 - name: Add text/markdown mime type
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: /usr/local/etc/nginx/mime.types
     line: '    text/markdown                                    md;'
     regexp: 'text/markdown'
@@ -28,7 +28,7 @@
   become: yes
 
 - name: Append to text/plain mime type
-  lineinfile:
+  ansible.builtin.lineinfile:
     name: /usr/local/etc/nginx/mime.types
     line: '    text/plain                                       txt log Dockerfile;'
     regexp: '    text/plain                                       txt'
@@ -36,7 +36,7 @@
   become: yes
 
 - name: create nginx conf.d dir
-  file:
+  ansible.builtin.file:
     path: /usr/local/etc/nginx/conf.d
     state: directory
     mode: 0755
@@ -45,7 +45,7 @@
   become: yes
 
 - name: copy nginx.conf template
-  template:
+  ansible.builtin.template:
     src: nginx.conf.j2
     dest: /usr/local/etc/nginx/nginx.conf
     owner: root
@@ -56,7 +56,7 @@
   become: yes
 
 - name: start nginx
-  service:
+  ansible.builtin.service:
     name: nginx
     state: started
   when: nginx_conf_update.changed

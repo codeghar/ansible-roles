@@ -1,12 +1,12 @@
 ---
 - name: install python3-pip
-  apt:
+  ansible.builtin.apt:
     name: python3-pip
     state: present
   become: yes
 
 - name: install docker-compose
-  pip:
+  ansible.builtin.pip:
     name: docker-compose
     executable: "/usr/bin/pip3"
     state: present

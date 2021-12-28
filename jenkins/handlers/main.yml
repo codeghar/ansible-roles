@@ -1,6 +1,6 @@
 ---
 - name: restart jenkins
-  systemd:
+  ansible.builtin.systemd:
       name: jenkins
       state: restarted
       daemon_reload: yes
@@ -9,7 +9,7 @@
   become: yes
 
 - name: wait for jenkins to be up again
-  uri:
+  ansible.builtin.uri:
       url: "{{ url }}"
       status_code: 200
       user: "{{ admin_user }}"

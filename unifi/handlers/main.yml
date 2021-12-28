@@ -1,7 +1,7 @@
 ---
 # https://stackoverflow.com/a/28070759
 - name: restart ubuntu
-  command: 'sleep 1 && shutdown -r now "Reboot triggered by Ansible" && sleep 1'
+  ansible.builtin.command: 'sleep 1 && shutdown -r now "Reboot triggered by Ansible" && sleep 1'
   async: 1
   poll: 0
   ignore_errors: true

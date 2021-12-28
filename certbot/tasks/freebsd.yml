@@ -1,19 +1,19 @@
 ---
 - name: installs certbot
-  pkgng:
+  community.general.pkgng:
     name: py38-certbot
     state: present
   become: yes
 
 - name: crontab set shell
-  cron:
+  ansible.builtin.cron:
     name: SHELL
     env: yes
     value: /bin/sh
   become: yes
 
 - name: crontab set path
-  cron:
+  ansible.builtin.cron:
     name: PATH
     env: yes
     value: /etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
@@ -21,7 +21,7 @@
   become: yes
 
 - name: enable certbot renew cron job
-  cron:
+  ansible.builtin.cron:
     name: certbot renew
     job: certbot renew --deploy-hook /usr/local/etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
     weekday: "{{ cron_weekday }}"
@@ -30,7 +30,7 @@
   become: yes
 
 - name: create directory /usr/local/etc/newsyslog.conf.d/
-  file:
+  ansible.builtin.file:
     path: /usr/local/etc/newsyslog.conf.d/
     state: directory
     mode: 0755
@@ -39,7 +39,7 @@
   become: yes
 
 - name: configure certbot log rotation
-  copy:
+  ansible.builtin.copy:
     src: files/newsyslog.certbot.conf
     dest: /usr/local/etc/newsyslog.conf.d/certbot.conf
     owner: root
@@ -48,7 +48,7 @@
   become: yes
 
 - name: create directory /usr/local/etc/letsencrypt/renewal-hooks/deploy/
-  file:
+  ansible.builtin.file:
     path: /usr/local/etc/letsencrypt/renewal-hooks/deploy/
     state: directory
     mode: 0755
@@ -57,7 +57,7 @@
   become: yes
 
 - name: configure certbot renewal hook to reload nginx
-  copy:
+  ansible.builtin.copy:
     src: files/01-reload-nginx
     dest: /usr/local/etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
     owner: root

@@ -1,16 +1,16 @@
 ---
 - name: install python3.7
-  pkgng:
+  community.general.pkgng:
     name: python37
     state: present
   become: yes
 
 - name: install pip
-  shell: python3.7 -m ensurepip
+  ansible.builtin.shell: python3.7 -m ensurepip
   become: yes
 
 - name: install pipenv
-  pip:
+  ansible.builtin.pip:
     name: pipenv
     executable: "/usr/local/bin/pip3.7"
     state: present

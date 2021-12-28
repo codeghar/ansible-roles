@@ -1,5 +1,5 @@
 - name: restart docker snap
-  systemd:
+  ansible.builtin.systemd:
     name: snap.docker.dockerd
     state: restarted
     daemon_reload: yes

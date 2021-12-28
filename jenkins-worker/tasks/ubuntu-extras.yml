@@ -1,13 +1,13 @@
 ---
 - name: install pipenv
-  pip:
+  ansible.builtin.pip:
     name: pipenv
     executable: "/usr/bin/pip3"
     state: present
   become: yes
 
 - name: install make
-  apt:
+  ansible.builtin.apt:
     name: make
     state: present
   become: yes
