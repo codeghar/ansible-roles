@@ -1,0 +1,20 @@
+galaxy_info:
+  author: Hamza Sheikh
+  description: your description
+
+  license:
+    - MIT
+
+  min_ansible_version: 2.7
+
+  platforms:
+    - name: FreeBSD
+      versions:
+        - 12
+        - 13
+
+  galaxy_tags:
+    - freebsd
+    - pf
+
+dependencies: []

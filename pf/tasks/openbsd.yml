@@ -1,0 +1,12 @@
+---
+- name: copy pf rules
+  template:
+    src: erl-gateway.pf.conf.j2
+    dest: /etc/pf.conf
+  register: pfrules
+  become: yes
+
+- name: reload pf config
+  shell: pfctl -f /etc/pf.conf
+  when: pfrules.changed
+  become: yes
