@@ -4,7 +4,6 @@
     src: server.pf.conf.j2
     dest: /etc/pf.conf
   register: pf_rules_updated
-  when: server_pf
   become: yes
 
 - name: enable pf
