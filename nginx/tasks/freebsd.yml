@@ -9,6 +9,7 @@
   ansible.builtin.command: sysrc nginx_enable="YES"
   become: yes
 
+# http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
 - name: Add text/x-rst mime type
   ansible.builtin.lineinfile:
     name: /usr/local/etc/nginx/mime.types
@@ -18,6 +19,7 @@
     state: present
   become: yes
 
+# http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
 - name: Add text/markdown mime type
   ansible.builtin.lineinfile:
     name: /usr/local/etc/nginx/mime.types

@@ -1,0 +1,53 @@
+---
+- name: copy pf rules
+  ansible.builtin.template:
+    src: server.pf.conf.j2
+    dest: /etc/pf.conf
+  register: pf_rules_updated
+  when: server_pf
+  become: yes
+
+- name: enable pf
+  ansible.builtin.shell: sysrc pf_enable="YES"
+  become: yes
+
+- name: set pf rules path
+  ansible.builtin.shell: sysrc pf_rules="/etc/pf.conf"
+  become: yes
+
+- name: set pf flags
+  ansible.builtin.shell: sysrc pf_flags=""
+  become: yes
+
+- name: enable pf log
+  ansible.builtin.shell: sysrc pflog_enable="YES"
+  become: yes
+
+- name: set pf log path
+  ansible.builtin.shell: sysrc pflog_logfile="/var/log/pflog"
+  become: yes
+
+- name: set pf log flags
+  ansible.builtin.shell: sysrc pflog_flags=""
+  become: yes
+
+- name: reload pf
+  ansible.builtin.shell: /sbin/pfctl -f /etc/pf.conf
+  async: 5
+  poll: 0
+  register: pf_reloaded
+  become: yes
+  when: pf_rules_updated.changed
+
+- name: wait for reconnection post pf restart
+  wait_for_connection:
+  when: pf_reloaded.changed
+  #   timeout: 30
+  # local_action: wait_for_connection
+  # wait_for:
+  #   # host: "{{ inventory_hostname }}"
+  #   host: "{{ ansible_ssh_host }}"
+  #   state: started
+  #   port: 22
+  #   timeout: 30
+  #   delay: 10

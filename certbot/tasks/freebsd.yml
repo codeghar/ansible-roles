@@ -38,6 +38,8 @@
     group: wheel
   become: yes
 
+# https://www.freebsd.org/doc/handbook/configtuning-syslog.html
+# https://www.freebsd.org/cgi/man.cgi?query=newsyslog.conf&sektion=5&manpath=freebsd-release-ports
 - name: configure certbot log rotation
   ansible.builtin.copy:
     src: files/newsyslog.certbot.conf
@@ -56,6 +58,9 @@
     group: wheel
   become: yes
 
+# Sources:
+# https://www.guyrutenberg.com/2017/01/01/lets-encrypt-reload-nginx-after-renewing-certificates/
+# https://certbot.eff.org/docs/using.html#renewing-certificates
 - name: configure certbot renewal hook to reload nginx
   ansible.builtin.copy:
     src: files/01-reload-nginx
