@@ -28,6 +28,8 @@
     hour: "{{ cron_hour }}"
     minute: "{{ cron_minute }}"
   become: yes
+  when:
+    - nginx == true
 
 - name: create directory /usr/local/etc/newsyslog.conf.d/
   ansible.builtin.file:
