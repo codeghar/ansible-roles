@@ -1,0 +1,13 @@
+---
+- name: Install Prometheus Node Exporter
+  community.general.zypper:
+    name: golang-github-prometheus-node_exporter
+    state: present
+  become: yes
+
+- name: Enable and start prometheus-node_exporter.service
+  ansible.builtin.systemd:
+    name: prometheus-node_exporter.service
+    enabled: yes
+    state: started
+  become: yes

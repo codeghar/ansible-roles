@@ -5,7 +5,9 @@
 # revision 1.3
 ######################################
 
-admin_tcp_services = "{ ssh, 5201 }"
+# 5201: iperf3 server
+# 9113: nginx-prometheus-exporter
+admin_tcp_services = "{ ssh, 5201, 9113 }"
 tcp_services = "{ domain, www, https, 122, ntp, 43}"
 udp_services = "{ domain, ntp }"
 icmp_types = "{ echoreq, unreach }"

@@ -1,0 +1,16 @@
+---
+- name: Install nginx Prometheus exporter
+  community.general.pkgng:
+    name: nginx-prometheus-exporter
+    state: present
+  become: yes
+
+- name: Enable nginx Prometheus exporter
+  ansible.builtin.command: sysrc nginx_prometheus_exporter_enable=YES
+  become: yes
+
+- name: Start nginx Prometheus exporter
+  ansible.builtin.service:
+    name: nginx-prometheus-exporter
+    state: started
+  become: yes

@@ -57,9 +57,20 @@
   register: nginx_conf_update
   become: yes
 
+- name: copy stub_status config
+  ansible.builtin.copy:
+    src: files/stub_status.conf
+    dest: /usr/local/etc/nginx/conf.d/stub_status.conf
+    owner: root
+    group: wheel
+    mode: "u=rw,g=r,o=r"
+    backup: yes
+  register: nginx_conf_stub_status_update
+  become: yes
+
 - name: start nginx
   ansible.builtin.service:
     name: nginx
     state: started
-  when: nginx_conf_update.changed
+  when: nginx_conf_update.changed or nginx_conf_stub_status_update.changed
   become: yes
