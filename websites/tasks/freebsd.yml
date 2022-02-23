@@ -1,5 +1,5 @@
 ---
-- name: push {{ domain_name }} contents
+- name: "push {{ domain_name }} contents"
   ansible.posix.synchronize:
     src: "{{ contents_path }}"
     dest: "/var/www/{{ domain_name }}/"
@@ -8,7 +8,7 @@
     perms: no
   become: yes
 
-- name: fix perms on {{ domain_name }} contents dir
+- name: "fix perms on {{ domain_name }} contents dir"
   ansible.builtin.file:
     path: "/var/www/{{ domain_name }}"
     state: directory
