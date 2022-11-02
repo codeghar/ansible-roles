@@ -1,0 +1,13 @@
+---
+- name: Install Prometheus Node Exporter
+  ansible.builtin.dnf:
+    name: golang-github-prometheus-node-exporter
+    state: present
+  become: yes
+
+- name: Enable and start prometheus-node-exporter.service
+  ansible.builtin.systemd:
+    name: prometheus-node-exporter.service
+    enabled: yes
+    state: started
+  become: yes
