@@ -1,0 +1,13 @@
+---
+admin_email: CHANGEME
+autoindex: false
+default_file_type: "text/html"
+domain_name: CHANGEME.com
+index_pages: "index.html index.htm home.htm"
+os_family_lets_encrypt_path_prefix:
+    FreeBSD: /usr/local/etc/letsencrypt
+    RedHat: /etc/letsencrypt
+os_family_nginx_path_prefix:
+    FreeBSD: /var/www
+    RedHat: /srv/www
+redirect_domain: ""

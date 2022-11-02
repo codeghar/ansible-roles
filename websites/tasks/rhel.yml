@@ -1,0 +1,62 @@
+---
+- name: install rsync
+  ansible.builtin.dnf:
+    name: rsync
+    state: present
+  become: yes
+
+- name: "create {{ domain_name }} contents dir"
+  ansible.builtin.file:
+    path: "/srv/www/{{ domain_name }}"
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+    recurse: yes
+  become: yes
+
+- name: "push {{ domain_name }} contents"
+  ansible.posix.synchronize:
+    src: "{{ contents_path }}"
+    dest: "/srv/www/{{ domain_name }}/"
+    mode: push
+    recursive: yes
+    perms: no
+    use_ssh_args: yes
+  become: yes
+
+- name: "fix perms on {{ domain_name }} contents dir"
+  ansible.builtin.file:
+    path: "/srv/www/{{ domain_name }}"
+    state: directory
+    mode: 0755
+    owner: nginx
+    group: nginx
+    recurse: yes
+  become: yes
+
+# SELinux fixes
+# https://www.nginx.com/blog/using-nginx-plus-with-selinux/
+
+- name: install selinux tools like audit2why, semanage, etc.
+  ansible.builtin.dnf:
+    name: policycoreutils-python-utils
+    state: present
+  become: yes
+
+- name: install selinux tools like sesearch, etc.
+  ansible.builtin.dnf:
+    name: setools-console
+    state: present
+  become: yes
+
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security-enhanced_linux/sect-security-enhanced_linux-selinux_contexts_labeling_files-persistent_changes_semanage_fcontext
+- name: modify file labels for selinux - step 1
+  command: "semanage fcontext -a -t httpd_sys_content_t '/srv/www/{{ domain_name }}(/.*)?'"
+  ignore_errors: yes
+  become: yes
+
+- name: modify file labels for selinux - step 2
+  command: "restorecon -Rv /srv/www/{{ domain_name }}"
+  ignore_errors: yes
+  become: yes
