@@ -1,0 +1,5 @@
+---
+admin_password: null
+admin_user: first
+password_salt: null
+suse_prefer_yast: no
