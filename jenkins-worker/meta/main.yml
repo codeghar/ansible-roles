@@ -1,24 +1,29 @@
+# https://galaxy.ansible.com/docs/contributing/creating_role.html#role-metadata
+# https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html?extIdCarryOver=true&sc_cid=701f2000001OH7YAAW#role-dependencies
 galaxy_info:
   author: Hamza Sheikh
-  description: your description
+  description: Prepare a worker node to connect with Jenkins
 
-  license:
-    - MIT
+  license: MIT
 
-  min_ansible_version: 2.9
+  min_ansible_version: "2.9"
 
+  # https://galaxy.ansible.com/api/v1/platforms/
+  # https://raw.githubusercontent.com/ansible/schemas/main/f/ansible-meta.json
   platforms:
     - name: FreeBSD
+      versions:
+      - "all"
     - name: Ubuntu
       versions:
-        - 18.04
-        - 20.04
+      - "20.04"
+      - "18.04"
 
   galaxy_tags:
-    - jenkins
-    - ubuntu
-    - java
-    - jdk
-    - jre
+  - jenkins
+  - ubuntu
+  - java
+  - jdk
+  - jre
 
 dependencies: []
