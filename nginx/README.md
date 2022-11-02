@@ -1,11 +1,12 @@
 # nginx
 
 Install and configure nginx. This role was developed and tested against
-FreeBSD 12.0-RELEASE.
+FreeBSD 13.1-RELEASE and clones of Red Hat Enterprise Linux 9.
 
 Supported operating systems:
 
 - FreeBSD
+- Red Hat Enterprise Linux and its clones
 
 More information,
 
@@ -17,7 +18,6 @@ More information,
       roles:
          - role: nginx
 
-License
--------
+## License
 
 MIT

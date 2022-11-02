@@ -1,15 +1,15 @@
 ---
 - name: create site contents dir
   ansible.builtin.file:
-    path: /var/www/{{ domain_name }}
+    path: /srv/www/{{ domain_name }}
     state: directory
     mode: 0755
-    owner: www
-    group: www
+    owner: nginx
+    group: nginx
   become: yes
 
 - name: find cert status
-  ansible.builtin.shell: "ls /usr/local/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
+  ansible.builtin.shell: "ls /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
   register: cert_status
   ignore_errors: true
   become: yes
@@ -27,7 +27,7 @@
 - name: copy site config file
   ansible.builtin.template:
     src: domain.tld.conf.j2
-    dest: /usr/local/etc/nginx/conf.d/{{ domain_name }}.conf
+    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
     owner: root
     group: wheel
     mode: "u=rw,g=r,o=r"
@@ -41,7 +41,7 @@
   become: yes
 
 - name: install lets encrypt certificate
-  ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_specific_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }} -d www.{{ domain_name }}
+  ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_family_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }} -d www.{{ domain_name }}
   register: certbot_install
   changed_when: "'no action taken' not in certbot_install.stdout or 'Congratulations' in certbot_install.stdout"
   notify:
@@ -56,7 +56,7 @@
 - name: copy site config file
   ansible.builtin.template:
     src: domain.tld.conf.j2
-    dest: /usr/local/etc/nginx/conf.d/{{ domain_name }}.conf
+    dest: /etc/nginx/conf.d/{{ domain_name }}.conf
     owner: root
     group: wheel
     mode: "u=rw,g=r,o=r"

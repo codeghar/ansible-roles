@@ -6,6 +6,7 @@
     mode: push
     recursive: yes
     perms: no
+    use_ssh_args: yes
   become: yes
 
 - name: "fix perms on {{ domain_name }} contents dir"

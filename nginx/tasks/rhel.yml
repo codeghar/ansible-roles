@@ -1,18 +1,14 @@
 ---
-- name: Installs nginx web server
-  community.general.pkgng:
+- name: install nginx
+  ansible.builtin.dnf:
     name: nginx
     state: present
   become: yes
 
-- name: Enable nginx
-  ansible.builtin.command: sysrc nginx_enable="YES"
-  become: yes
-
 # http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
-- name: Add text/x-rst mime type
+- name: add text/x-rst mime type
   ansible.builtin.lineinfile:
-    name: /usr/local/etc/nginx/mime.types
+    name: /etc/nginx/mime.types
     line: '    text/x-rst                                      rst;'
     regexp: 'text/x-rst'
     insertbefore: '^}'
@@ -20,47 +16,27 @@
   become: yes
 
 # http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
-- name: Add text/markdown mime type
+- name: add text/markdown mime type
   ansible.builtin.lineinfile:
-    name: /usr/local/etc/nginx/mime.types
+    name: /etc/nginx/mime.types
     line: '    text/markdown                                    md;'
     regexp: 'text/markdown'
     insertbefore: '^}'
     state: present
   become: yes
 
-- name: Append to text/plain mime type
+- name: append to text/plain mime type
   ansible.builtin.lineinfile:
-    name: /usr/local/etc/nginx/mime.types
+    name: /etc/nginx/mime.types
     line: '    text/plain                                       txt log Dockerfile;'
     regexp: '    text/plain                                       txt'
     state: present
   become: yes
 
-- name: create nginx conf.d dir
-  ansible.builtin.file:
-    path: /usr/local/etc/nginx/conf.d
-    state: directory
-    mode: 0755
-    owner: root
-    group: wheel
-  become: yes
-
-- name: copy nginx.conf template
-  ansible.builtin.template:
-    src: freebsd_nginx.conf.j2
-    dest: /usr/local/etc/nginx/nginx.conf
-    owner: root
-    group: wheel
-    mode: "u=rw,g=r,o=r"
-    backup: yes
-  register: nginx_conf_update
-  become: yes
-
 - name: copy stub_status config
   ansible.builtin.copy:
     src: files/stub_status.conf
-    dest: /usr/local/etc/nginx/conf.d/stub_status.conf
+    dest: /etc/nginx/conf.d/stub_status.conf
     owner: root
     group: wheel
     mode: "u=rw,g=r,o=r"
@@ -68,9 +44,10 @@
   register: nginx_conf_stub_status_update
   become: yes
 
-- name: start nginx
-  ansible.builtin.service:
+- name: enable and start nginx service systemd
+  systemd:
     name: nginx
+    enabled: yes
     state: started
-  when: nginx_conf_update.changed or nginx_conf_stub_status_update.changed
+  when: ansible_service_mgr == "systemd"
   become: yes
