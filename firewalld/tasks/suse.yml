@@ -1,0 +1,9 @@
+---
+- include_tasks: ssh.yml
+
+- include_tasks: trusted.yml
+  when:
+  - trusted_source_ips is defined and (trusted_source_ips|length>0)
+
+- include_tasks: web.yml
+  when: "allow_web_ports == true"

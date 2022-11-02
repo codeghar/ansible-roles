@@ -1,0 +1,24 @@
+---
+# Add the rule twice
+# Once to add to running config
+- name: add source ip(s) to trusted zone
+  command: "firewall-cmd --zone=trusted --add-source={{ item }}"
+  when:
+  - firewalld_running
+  with_items: "{{ trusted_source_ips }}"
+  become: yes
+
+# Second to add to make it permanent config and survive restart
+- name: add source ip(s) to trusted zone (permanent)
+  command: "firewall-cmd --permanent --zone=trusted --add-source={{ item }}"
+  when:
+  - firewalld_running
+  with_items: "{{ trusted_source_ips }}"
+  become: yes
+
+- name: add source ip(s) to trusted zone (permanent)
+  command: "firewall-offline-cmd --zone=trusted --add-source={{ item }}"
+  when:
+  - not firewalld_running
+  with_items: "{{ trusted_source_ips }}"
+  become: yes

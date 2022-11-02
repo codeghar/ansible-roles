@@ -1,0 +1,51 @@
+---
+# There is a difference in syntax of firewall-cmd and firewall-offline-cmd
+# More info: https://github.com/voxpupuli/puppet-firewalld/issues/90#issuecomment-253154980
+# That is why we check status of firewall and use the appropriate command
+
+- name: install firewalld
+  ansible.builtin.dnf:
+    name: firewalld
+    state: present
+  when:
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_os_family == "RedHat"
+  become: yes
+
+- name: check firewalld status
+  command: systemctl status firewalld
+  ignore_errors: yes
+  register: firewalld_status
+  when: ansible_service_mgr == "systemd"
+
+- name: set fact firewalld is running
+  set_fact:
+    firewalld_running: true
+    firewalld_command_prefix: "firewall-cmd --permanent"
+  when:
+    - "'Active: active (running)' in firewalld_status.stdout"
+
+- debug: "msg={{ firewalld_command_prefix }}"
+
+- include_tasks: rhel.yml
+  when:
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"
+    - ansible_os_family == "RedHat"
+
+- include_tasks: suse.yml
+  when:
+    - ansible_distribution_major_version == "15"
+    - ansible_os_family == "Suse"
+
+- name: enable and start firewalld service systemd
+  systemd:
+    name: firewalld
+    enabled: yes
+    state: started
+  when: ansible_service_mgr == "systemd"
+  register: firewalld_service_started
+  become: yes
+
+- name: reload firewalld rules
+  command: firewall-cmd --reload
+  become: yes

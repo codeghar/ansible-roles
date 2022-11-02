@@ -1,0 +1,6 @@
+---
+allow_web_ports: false
+firewalld_running: false
+firewalld_command_prefix: firewall-offline-cmd
+harden: false
+trusted_source_ips: []
