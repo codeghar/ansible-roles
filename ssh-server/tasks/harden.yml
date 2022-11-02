@@ -1,0 +1,11 @@
+---
+- name: enable centralized authorized_keys
+  ansible.builtin.copy:
+    src: files/harden.conf
+    dest: /etc/ssh/sshd_config.d/00-harden.conf
+    owner: root
+    group: wheel
+    mode: 0660
+  notify:
+    - restart ssh service systemd
+  become: yes
