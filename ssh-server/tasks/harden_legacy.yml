@@ -1,0 +1,62 @@
+---
+- name: disable root login (add 'no')
+  lineinfile:
+    state: present
+    path: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin no"
+    line: "PermitRootLogin no"
+    insertafter: EOF
+  become: yes
+  notify:
+    - restart ssh service systemd
+
+- name: disable root login (remove 'yes')
+  lineinfile:
+    state: absent
+    path: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin yes"
+  become: yes
+  notify:
+    - restart ssh service systemd
+
+- name: disable password authentication (add 'no')
+  lineinfile:
+    state: present
+    path: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication no"
+    line: "PasswordAuthentication no"
+    insertafter: EOF
+  become: yes
+  notify:
+    - restart ssh service systemd
+
+- name: disable password authentication (remove 'yes')
+  lineinfile:
+    state: absent
+    path: /etc/ssh/sshd_config
+    regexp: "^PasswordAuthentication yes"
+  become: yes
+  notify:
+    - restart ssh service systemd
+
+- name: configure alive interval
+  lineinfile:
+    state: present
+    path: /etc/ssh/sshd_config
+    regexp: "^.*ClientAliveInterval.*$"
+    line: "ClientAliveInterval 60"
+    insertafter: EOF
+  become: yes
+  notify:
+    - restart ssh service systemd
+
+- name: configure alive count max
+  lineinfile:
+    state: present
+    path: /etc/ssh/sshd_config
+    regexp: "^.*ClientAliveCountMax.*$"
+    line: "ClientAliveCountMax 15"
+    insertafter: EOF
+  become: yes
+  notify:
+    - restart ssh service systemd

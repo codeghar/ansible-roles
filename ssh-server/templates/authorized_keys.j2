@@ -1,0 +1,5 @@
+{% for user in centralized_ssh_user_keys %}
+{% for public_key in user["public_keys"] %}
+{{ public_key }}
+{% endfor %}
+{% endfor %}

@@ -1,0 +1,32 @@
+---
+- name: create directory for centralized authorized_keys
+  file:
+    state: directory
+    dest: "/etc/ssh/keys"
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - restart ssh service systemd
+  become: yes
+
+- name: enable centralized authorized_keys
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: "^.*AuthorizedKeysFile.*$"
+    line: "AuthorizedKeysFile .ssh/authorized_keys .ssh/authorized_keys2 /etc/ssh/keys/%u"
+    insertafter: EOF
+  notify:
+    - restart ssh service systemd
+  become: yes
+
+- name: distribute centralized authorized_keys
+  template:
+    src: authorized_keys.j2
+    dest: "/etc/ssh/keys/{{ item.name }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items: "{{ centralized_ssh_user_keys }}"
+  become: yes

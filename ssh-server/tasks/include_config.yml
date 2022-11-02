@@ -1,0 +1,25 @@
+---
+# https://www.openssh.com/txt/release-8.2
+# https://bugzilla.mindrot.org/show_bug.cgi?id=2468
+- name: create directory for custom sshd config
+  file:
+    state: directory
+    dest: "/etc/ssh/sshd_config.d"
+    owner: root
+    group: root
+    mode: 0755
+  notify:
+    - restart ssh service systemd
+  become: yes
+
+# The "Include ..." line MUST be towards the top of the file
+- name: include custom sshd config
+  lineinfile:
+    state: present
+    path: /etc/ssh/sshd_config
+    regexp: "^Include /etc/ssh/sshd_config.d"
+    line: "Include /etc/ssh/sshd_config.d/*.conf"
+    insertafter: "^#.*\\$OpenBSD.*"
+  become: yes
+  notify:
+    - restart ssh service systemd
