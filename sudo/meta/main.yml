@@ -2,7 +2,7 @@
 # https://docs.ansible.com/ansible/latest/user_guide/playbooks_reuse_roles.html?extIdCarryOver=true&sc_cid=701f2000001OH7YAAW#role-dependencies
 galaxy_info:
   author: Hamza Sheikh
-  description: Configure ssh server
+  description: Configure sudo
 
   license: MIT
 

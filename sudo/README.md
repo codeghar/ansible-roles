@@ -1,4 +1,4 @@
-# ssh Server
+# sudo
 
 Install and configure sudo.
 
