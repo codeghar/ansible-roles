@@ -14,12 +14,12 @@
 
 - include_tasks: freebsd.yml
   when:
-    - ansible_distribution == "FreeBSD"
+    - ansible_system == "FreeBSD"
     - undo == false
 
 - include_tasks: freebsd-extras.yml
   when:
-    - ansible_distribution == "FreeBSD"
+    - ansible_system == "FreeBSD"
     - undo == false
     - install_extras == true
 
@@ -31,5 +31,5 @@
 
 - include_tasks: freebsd-undo.yml
   when:
-    - ansible_distribution == "FreeBSD"
+    - ansible_system == "FreeBSD"
     - undo == true

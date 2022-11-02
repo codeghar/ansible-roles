@@ -82,7 +82,6 @@ bits behind. The reason is we want to be on the safe side most of the time.
         - role: jenkins-worker
           undo: true
 
-License
--------
+## License
 
 MIT
