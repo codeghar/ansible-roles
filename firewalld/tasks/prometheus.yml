@@ -1,0 +1,21 @@
+---
+# Add the rule twice
+# Once to add to running config
+- name: remove prometheus from public zone (online mode)
+  command: "firewall-cmd --zone=public --remove-port=9100/tcp"
+  when:
+  - firewalld_running
+  become: yes
+
+# Second to add to make it permanent config and survive restart
+- name: remove prometheus from public zone (permanent) (online mode)
+  command: "firewall-cmd --permanent --zone=public --remove-port=9100/tcp"
+  when:
+  - firewalld_running
+  become: yes
+
+- name: remove prometheus from public zone (offline mode)
+  command: "firewall-offline-cmd --zone=public --remove-port-from-zone=9100/tcp"
+  when:
+  - not firewalld_running
+  become: yes
