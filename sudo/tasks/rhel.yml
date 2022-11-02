@@ -1,0 +1,17 @@
+---
+- name: install sudo
+  ansible.builtin.dnf:
+    name: sudo
+    state: present
+  when:
+    - ansible_distribution == "OracleLinux"
+  become: yes
+
+- name: copy custom sudoers
+  ansible.builtin.copy:
+    src: rhel
+    dest: /etc/sudoers.d/custom
+    owner: root
+    group: root
+    mode: 0640
+  become: yes
