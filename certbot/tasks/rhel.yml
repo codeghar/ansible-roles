@@ -1,0 +1,78 @@
+---
+- name: install certbot
+  ansible.builtin.dnf:
+    name: certbot
+    state: present
+  become: yes
+
+- name: install cronie
+  ansible.builtin.dnf:
+    name: cronie
+    state: present
+  become: yes
+
+- name: install tar
+  ansible.builtin.dnf:
+    name: tar
+    state: present
+  become: yes
+
+- name: crontab set shell
+  ansible.builtin.cron:
+    name: SHELL
+    env: yes
+    value: /bin/sh
+  become: yes
+
+- name: crontab set path
+  ansible.builtin.cron:
+    name: PATH
+    env: yes
+    value: /etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+    insertafter: SHELL
+  become: yes
+
+- name: enable certbot renew cron job - production
+  ansible.builtin.cron:
+    name: certbot renew
+    job: /usr/bin/certbot renew
+    weekday: "{{ cron_weekday }}"
+    hour: "{{ cron_hour }}"
+    minute: "{{ cron_minute }}"
+  become: yes
+  when:
+    - production == true
+
+- name: enable certbot renew cron job - staging
+  ansible.builtin.cron:
+    name: certbot renew
+    job: /usr/bin/certbot renew --test-cert --dry-run
+    weekday: "{{ cron_weekday }}"
+    hour: "{{ cron_hour }}"
+    minute: "{{ cron_minute }}"
+  become: yes
+  when:
+    - production == false
+
+- name: create directory /etc/letsencrypt/renewal-hooks/deploy/
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/deploy/
+    state: directory
+    mode: 0755
+    owner: root
+    group: wheel
+  become: yes
+
+# Sources:
+# https://www.guyrutenberg.com/2017/01/01/lets-encrypt-reload-nginx-after-renewing-certificates/
+# https://certbot.eff.org/docs/using.html#renewing-certificates
+- name: configure certbot renewal hook to reload nginx
+  ansible.builtin.copy:
+    src: files/01-reload-nginx-rhel
+    dest: /etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
+    owner: root
+    group: wheel
+    mode: 0755
+  become: yes
+  when:
+    - nginx == true

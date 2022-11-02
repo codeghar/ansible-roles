@@ -3,3 +3,4 @@ cron_hour: "14"
 cron_minute: "14"
 cron_weekday: "Tue,Fri"
 nginx: true
+production: true

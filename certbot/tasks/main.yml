@@ -1,4 +1,8 @@
 ---
 - include_tasks: freebsd.yml
   when:
-    - ansible_distribution == "FreeBSD"
+    - ansible_system == "FreeBSD"
+
+- include_tasks: rhel.yml
+  when:
+    - ansible_os_family == "RedHat"

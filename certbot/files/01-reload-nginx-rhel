@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+nginx -t
+systemctl restart nginx
+
+# Sources:
+# https://www.guyrutenberg.com/2017/01/01/lets-encrypt-reload-nginx-after-renewing-certificates/
+# https://certbot.eff.org/docs/using.html#renewing-certificates
