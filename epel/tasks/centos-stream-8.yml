@@ -1,0 +1,21 @@
+---
+# https://docs.fedoraproject.org/en-US/epel/#_el8
+- name: enable powertools
+  command: dnf config-manager --set-enabled powertools
+  become: yes
+
+- name: install epel-release
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+  become: yes
+
+- name: install epel-next-release
+  ansible.builtin.dnf:
+    name: epel-next-release
+    state: present
+  become: yes
+
+- name: setup epel
+  command: dnf update -y
+  become: yes
