@@ -1,8 +1,6 @@
 # EPEL
 
-Install certbot and configure it to auto-renew twice a week.
-
-Optionally supports reloading nginx with a renewal hook.
+Install and configure EPEL.
 
 Supported operating systems:
 
