@@ -1,7 +1,8 @@
 # Certbot
 
-Install certbot and configure it to auto-renew twice a week. Supports reloading
-nginx with a renewal hook.
+Install certbot and configure it to auto-renew twice a week.
+
+Optionally supports reloading nginx with a renewal hook.
 
 Supported operating systems:
 
