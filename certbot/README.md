@@ -1,13 +1,12 @@
 # Certbot
 
-Install certbot with Python 3.6 and configure it to auto-renew once a week.
-Supports reloading nginx with a renewal hook.
-
-This role was developed and tested against FreeBSD 12.0-RELEASE.
+Install certbot and configure it to auto-renew twice a week. Supports reloading
+nginx with a renewal hook.
 
 Supported operating systems:
 
 - FreeBSD
+- Red Hat Enterprise Linux and its clones
 
 More information,
 
@@ -23,9 +22,12 @@ _14_.
 - cron_minute - String to indicate at what minute to run certbot renew. Default
 is _14_.
 - cron_weekday - String to indicate on what day of the week to run certbot
-renew. Default is _Tue,Thu_ to avoid running into Let's Encrypt rate limiting.
+renew. Default is _Tue,Fri_ to avoid running into Let's Encrypt rate limiting.
 - nginx - Boolean which indicates that all tasks to support nginx in the
 environment must be run. Default is _true_.
+- production - Boolean which indicates that the configuration applied is for a
+production instance or for testing/sandbox purposes. Default is _true_. It is
+used on Red Hat Enterprise Linux (RHEL, EL) only.
 
 ## Example Playbook
 
@@ -33,7 +35,6 @@ environment must be run. Default is _true_.
       roles:
          - role: certbot
 
-License
--------
+## License
 
 MIT

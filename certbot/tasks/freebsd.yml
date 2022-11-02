@@ -65,7 +65,7 @@
 # https://certbot.eff.org/docs/using.html#renewing-certificates
 - name: configure certbot renewal hook to reload nginx
   ansible.builtin.copy:
-    src: files/01-reload-nginx
+    src: files/01-reload-nginx-freebsd
     dest: /usr/local/etc/letsencrypt/renewal-hooks/deploy/01-reload-nginx
     owner: root
     group: wheel
