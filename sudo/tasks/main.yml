@@ -1,0 +1,14 @@
+---
+- include_tasks: debian.yml
+  when:
+    - ansible_os_family == "Debian"
+
+- include_tasks: rhel.yml
+  when:
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9" or ansible_distribution_major_version == "36"
+    - ansible_os_family == "RedHat"
+
+- include_tasks: suse.yml
+  when:
+    - ansible_distribution_major_version == "15"
+    - ansible_os_family == "Suse"

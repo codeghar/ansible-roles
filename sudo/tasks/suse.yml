@@ -1,0 +1,15 @@
+---
+- name: install wheel group
+  community.general.zypper:
+    name: system-group-wheel
+    state: present
+  become: yes
+
+- name: copy custom sudoers
+  ansible.builtin.copy:
+    src: suse
+    dest: /etc/sudoers.d/custom
+    owner: root
+    group: root
+    mode: 0640
+  become: yes
