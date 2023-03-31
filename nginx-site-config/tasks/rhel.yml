@@ -40,12 +40,22 @@
   when: site_config_copied.changed
   become: yes
 
-- name: install lets encrypt certificate
+- name: install lets encrypt dual-domain certificate
   ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_family_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }} -d www.{{ domain_name }}
   register: certbot_install
   changed_when: "'no action taken' not in certbot_install.stdout or 'Congratulations' in certbot_install.stdout"
   notify:
      - restart nginx
+  when: site_has_www_domain == true
+  become: yes
+
+- name: install lets encrypt single-domain certificate
+  ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_family_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }}
+  register: certbot_install
+  changed_when: "'no action taken' not in certbot_install.stdout or 'Congratulations' in certbot_install.stdout"
+  notify:
+     - restart nginx
+  when: site_has_www_domain == false
   become: yes
 
 - name: tls is enabled

@@ -2,6 +2,7 @@
 admin_email: CHANGEME
 autoindex: false
 default_file_type: "text/html"
+site_has_www_domain: true
 domain_name: CHANGEME.com
 index_pages: "index.html index.htm home.htm"
 os_family_lets_encrypt_path_prefix:

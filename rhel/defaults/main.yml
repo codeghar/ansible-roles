@@ -1,0 +1,5 @@
+---
+install_certbot: false
+install_nginx: false
+install_prometheus: false
+preferred_hostname: "{{ inventory_hostname }}"

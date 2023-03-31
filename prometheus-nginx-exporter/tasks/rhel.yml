@@ -1,0 +1,44 @@
+---
+- name: Create Prometheus nginx Exporter repository
+  ansible.builtin.copy:
+    src: "home:aikchar:nginx-prometheus-exporter.repo"
+    dest: "/etc/yum.repos.d/home:aikchar:nginx-prometheus-exporter.repo"
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    backup: yes
+  become: yes
+
+- name: Install Prometheus nginx Exporter
+  ansible.builtin.dnf:
+    name: nginx-prometheus-exporter
+    state: present
+  become: yes
+
+- name: create directory /etc/systemd/system/nginx-prometheus-exporter.service.d/
+  ansible.builtin.file:
+    path: /etc/systemd/system/nginx-prometheus-exporter.service.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  become: yes
+
+- name: copy systemd override.conf config
+  ansible.builtin.copy:
+    src: files/override.conf
+    dest: /etc/systemd/system/nginx-prometheus-exporter.service.d/override.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    backup: yes
+  register: nginx_prom_exp_conf_systemd_override_conf_update
+  when: ansible_service_mgr == "systemd"
+  become: yes
+
+- name: Enable and start prometheus-node-exporter.service
+  ansible.builtin.systemd:
+    name: prometheus-node-exporter.service
+    enabled: yes
+    state: started
+  become: yes

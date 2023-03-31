@@ -1,0 +1,57 @@
+---
+- ansible.builtin.include_role:
+    name: epel
+- ansible.builtin.include_role:
+    name: sudo
+- ansible.builtin.include_role:
+    name: users
+- ansible.builtin.include_role:
+    name: ssh-server
+- ansible.builtin.include_role:
+    name: firewalld
+- ansible.builtin.include_role:
+    name: prometheus-node-exporter
+- ansible.builtin.include_role:
+    name: prometheus
+  when:
+  - install_prometheus
+
+- name: set hostname
+  ansible.builtin.hostname:
+    name: "{{ preferred_hostname }}"
+    use: systemd
+  become: yes
+
+# https://docs.fedoraproject.org/en-US/quick-docs/dnf/#sect-plugins
+- name: install dnf core plugins
+  ansible.builtin.dnf:
+    name: dnf-plugins-core
+    state: present
+  become: yes
+
+# https://docs.fedoraproject.org/en-US/quick-docs/dnf-system-upgrade/
+- name: install dnf-plugin-system-upgrade
+  ansible.builtin.dnf:
+    name: dnf-plugin-system-upgrade
+    state: present
+  when:
+  - ansible_distribution == "Fedora" and ansible_distribution_major_version == "36"
+  become: yes
+
+- name: install rpmconf
+  ansible.builtin.dnf:
+    name: rpmconf
+    state: present
+  when:
+  - ansible_distribution == "Fedora" and ansible_distribution_major_version == "36"
+  become: yes
+
+# - ansible.builtin.include_role:
+#     name: nginx
+#     when:
+#     - install_nginx == true
+
+# - ansible.builtin.include_role:
+#     name: certbot
+#     when:
+#     - install_certbot == true

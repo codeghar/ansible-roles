@@ -44,6 +44,27 @@
   register: nginx_conf_stub_status_update
   become: yes
 
+- name: create directory /etc/systemd/system/nginx.service.d/
+  ansible.builtin.file:
+    path: /etc/systemd/system/nginx.service.d
+    state: directory
+    mode: 0755
+    owner: root
+    group: root
+  become: yes
+
+- name: copy systemd override.conf config
+  ansible.builtin.copy:
+    src: files/override.conf
+    dest: /etc/systemd/system/nginx.service.d/override.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    backup: yes
+  register: nginx_conf_systemd_override_conf_update
+  when: ansible_service_mgr == "systemd"
+  become: yes
+
 - name: enable and start nginx service systemd
   systemd:
     name: nginx
