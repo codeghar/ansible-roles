@@ -27,6 +27,10 @@ server {
         allow all;
     }
 
+    location /.git {
+        deny all;
+    }
+
     location / {
 {% if redirect_domain %}
         # https://bjornjohansen.no/redirect-to-https-with-nginx
