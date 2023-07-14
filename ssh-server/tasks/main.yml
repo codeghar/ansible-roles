@@ -1,4 +1,8 @@
 ---
+- include_tasks: debian.yml
+  when:
+  - ansible_os_family == "Debian"
+
 - include_tasks: include_config.yml
   when:
   - (ansible_os_family == "Suse" and ansible_distribution_major_version == "15") or (ansible_os_family == "RedHat" and (ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"))
@@ -6,7 +10,7 @@
 - include_tasks: centralized_keys.yml
   when:
   - centralize_authorized_keys == true
-  - (ansible_distribution == "Fedora" and ansible_distribution_major_version == "36") or (ansible_os_family == "Suse" and ansible_distribution_major_version == "15") or (ansible_os_family == "RedHat" and (ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"))
+  - (ansible_distribution == "Fedora" and ansible_distribution_major_version == "36") or (ansible_os_family == "Suse" and ansible_distribution_major_version == "15") or (ansible_os_family == "RedHat" and (ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9")) or (ansible_os_family == "Debian" and ansible_distribution_major_version == "12")
 
 - include_tasks: centralized_keys_legacy.yml
   when:
@@ -16,7 +20,7 @@
 - include_tasks: harden.yml
   when:
   - harden == true
-  - (ansible_distribution == "Fedora" and ansible_distribution_major_version == "36") or (ansible_os_family == "Suse" and ansible_distribution_major_version == "15") or (ansible_os_family == "RedHat" and (ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"))
+  - (ansible_distribution == "Fedora" and ansible_distribution_major_version == "36") or (ansible_os_family == "Suse" and ansible_distribution_major_version == "15") or (ansible_os_family == "RedHat" and (ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9"))  or (ansible_os_family == "Debian" and ansible_distribution_major_version == "12")
 
 - include_tasks: harden_legacy.yml
   when:
@@ -31,5 +35,16 @@
   systemd:
     name: sshd
     enabled: yes
-  when: ansible_service_mgr == "systemd"
+  when:
+  - ansible_service_mgr == "systemd"
+  - ansible_os_family != "Debian"
+  become: yes
+
+- name: enable ssh service systemd (debian)
+  systemd:
+    name: ssh
+    enabled: yes
+  when:
+  - ansible_service_mgr == "systemd"
+  - ansible_os_family == "Debian"
   become: yes
