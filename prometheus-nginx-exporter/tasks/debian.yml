@@ -1,17 +1,7 @@
 ---
-- name: Create Prometheus nginx Exporter repository
-  ansible.builtin.copy:
-    src: "home:aikchar:nginx-prometheus-exporter.repo.rhel"
-    dest: "/etc/yum.repos.d/home:aikchar:nginx-prometheus-exporter.repo"
-    owner: root
-    group: root
-    mode: "u=rw,g=r,o=r"
-    backup: yes
-  become: yes
-
 - name: Install Prometheus nginx Exporter
-  ansible.builtin.dnf:
-    name: nginx-prometheus-exporter
+  ansible.builtin.apt:
+    name: prometheus-nginx-exporter
     state: present
   become: yes
 
