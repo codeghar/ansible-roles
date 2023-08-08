@@ -1,0 +1,2 @@
+---
+preferred_hostname: "{{ inventory_hostname }}"

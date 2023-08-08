@@ -1,0 +1,17 @@
+---
+- ansible.builtin.include_role:
+    name: sudo
+- ansible.builtin.include_role:
+    name: users
+- ansible.builtin.include_role:
+    name: ssh-server
+# - ansible.builtin.include_role:
+#     name: firewalld
+- ansible.builtin.include_role:
+    name: prometheus-node-exporter
+
+- name: set hostname
+  ansible.builtin.hostname:
+    name: "{{ preferred_hostname }}"
+    use: systemd
+  become: yes
