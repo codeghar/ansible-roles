@@ -5,6 +5,13 @@
     state: present
   become: yes
 
+- name: disable and stop certbot-renew.service
+  ansible.builtin.systemd:
+    name: certbot-renew.service
+    state: stopped
+    enabled: false
+  become: yes
+
 - name: install cronie
   ansible.builtin.dnf:
     name: cronie
