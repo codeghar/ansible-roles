@@ -1,0 +1,7 @@
+[home_aikchar_nginx-prometheus-exporter]
+name=nginx-prometheus-exporter (openSUSE 15.5)
+baseurl=https://download.opensuse.org/repositories/home:/aikchar:/nginx-prometheus-exporter/openSUSE_Leap_15.5/
+gpgcheck=1
+gpgkey=https://download.opensuse.org/repositories/home:/aikchar:/nginx-prometheus-exporter/openSUSE_Leap_15.5/repodata/repomd.xml.key
+enabled=1
+autorefresh=1

@@ -1,0 +1,6 @@
+---
+- name: install ssh-server
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+  become: yes
