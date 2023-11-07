@@ -5,6 +5,16 @@
     state: present
   become: yes
 
+- name: Configure prometheus.yml
+  template:
+    src: rhel.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    backup: true
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
 - name: Enable and start prometheus.service
   ansible.builtin.systemd:
     name: prometheus.service
