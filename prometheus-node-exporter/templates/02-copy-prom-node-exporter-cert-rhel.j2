@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+NOW=$(date -u +'%Y%m%d%H%M%S')
+
+cp '{{ cert_key_path }}' "{{ cert_key_path }}.${NOW}" || true
+cp '/etc/letsencrypt/live/{{ domain_name }}/privkey.pem' '{{ cert_key_path }}'
+chown root:prometheus '{{ cert_key_path }}'
+chmod 0640 '{{ cert_key_path }}'
+
+cp '{{ cert_path }}' "{{ cert_path }}.${NOW}" || true
+cp '/etc/letsencrypt/live/{{ domain_name }}/fullchain.pem' '{{ cert_path }}'
+chown root:prometheus '{{ cert_path }}'
+chmod 0644 '{{ cert_path }}'
+
+systemctl restart prometheus-node-exporter.service
