@@ -39,30 +39,6 @@
     insertafter: SHELL
   become: yes
 
-- name: enable certbot renew cron job - production
-  ansible.builtin.cron:
-    name: certbot renew
-    job: /usr/bin/certbot renew
-    # FreeBSD doesn't expect lowercase names of days but apparently RHEL does
-    # https://docs.fedoraproject.org/en-US/fedora/latest/system-administrators-guide/monitoring-and-automation/Automating_System_Tasks/#s2-configuring-cron-jobs
-    weekday: "{{ cron_weekday|lower }}"
-    hour: "{{ cron_hour }}"
-    minute: "{{ cron_minute }}"
-  become: yes
-  when:
-    - production == true
-
-- name: enable certbot renew cron job - staging
-  ansible.builtin.cron:
-    name: certbot renew
-    job: /usr/bin/certbot renew --test-cert --dry-run
-    weekday: "{{ cron_weekday }}"
-    hour: "{{ cron_hour }}"
-    minute: "{{ cron_minute }}"
-  become: yes
-  when:
-    - production == false
-
 - name: create directory /etc/letsencrypt/renewal-hooks/deploy/
   ansible.builtin.file:
     path: /etc/letsencrypt/renewal-hooks/deploy/

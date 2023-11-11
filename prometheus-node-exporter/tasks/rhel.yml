@@ -5,9 +5,81 @@
     state: present
   become: yes
 
+- block:
+
+    - name: Set facts
+      set_fact:
+        cert_key_path: "/usr/local/etc/{{ domain_name }}.privkey.pem"
+        cert_path: "/usr/local/etc/{{ domain_name }}.fullchain.pem"
+
+    - name: Copy certificate key
+      command:
+        cmd: "cp /etc/letsencrypt/live/{{ domain_name }}/privkey.pem {{ cert_key_path }}"
+
+    - name: Set owner on certificate key
+      command:
+        cmd: "chown root:prometheus {{ cert_key_path }}"
+
+    - name: Set permissions on certificate key
+      command:
+        cmd: "chmod 0640 {{ cert_key_path }}"
+
+    - name: Copy certificate
+      command:
+        cmd: "cp /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem {{ cert_path }}"
+
+    - name: Set owner on certificate
+      command:
+        cmd: "chown root:prometheus {{ cert_path }}"
+
+    - name: Set permissions on certificate
+      command:
+        cmd: "chmod 0644 {{ cert_path }}"
+
+    - name: Copy tls config
+      ansible.builtin.template:
+        src: web_config.yml.j2
+        dest: /usr/local/etc/prometheus_node_exporter_web_config.yml
+        owner: root
+        group: prometheus
+        mode: "u=rw,g=r,o=r"
+        backup: yes
+
+    - name: Enable tls config
+      ansible.builtin.lineinfile:
+        path: /etc/default/prometheus-node-exporter
+        regexp: "^ARGS=''"
+        line: "ARGS='--web.config /usr/local/etc/prometheus_node_exporter_web_config.yml'"
+      register: prom_tls_enabled
+
+    - name: Configure certbot renewal hook for prometheus-node-exporter.service
+      ansible.builtin.template:
+        src: 02-copy-prom-node-exporter-cert-rhel.j2
+        dest: "/etc/letsencrypt/renewal-hooks/deploy/02-copy-prom-node-exporter-cert-{{ domain_name }}"
+        owner: root
+        group: wheel
+        mode: 0755
+
+  ignore_errors: true
+  when:
+    - prom_node_exporter_enable_tls
+  become: yes
+
 - name: Enable and start prometheus-node-exporter.service
   ansible.builtin.systemd:
     name: prometheus-node-exporter.service
     enabled: yes
     state: started
+  register: prom_svc_modified
+  become: yes
+
+- name: Restart prometheus-node-exporter.service
+  ansible.builtin.systemd:
+    name: prometheus-node-exporter.service
+    state: restarted
+  when:
+    - prom_node_exporter_enable_tls
+    - prom_tls_enabled is defined
+    - prom_tls_enabled.changed
+    - not prom_svc_modified.changed
   become: yes
