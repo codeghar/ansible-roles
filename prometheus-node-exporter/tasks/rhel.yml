@@ -1,9 +1,21 @@
 ---
-- name: Install Prometheus Node Exporter
+- name: Install Prometheus Node Exporter (RHEL)
   ansible.builtin.dnf:
     name: golang-github-prometheus-node-exporter
     state: present
   become: yes
+  when:
+    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9" or ansible_distribution_major_version == "10"
+    - ansible_os_family == "RedHat"
+
+- name: Install Prometheus Node Exporter (Fedora)
+  ansible.builtin.dnf:
+    name: node-exporter
+    state: present
+  become: yes
+  when:
+    - ansible_distribution_major_version == "36" or ansible_distribution_major_version == "43"
+    - ansible_os_family == "RedHat"
 
 - block:
 
