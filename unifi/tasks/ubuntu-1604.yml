@@ -5,7 +5,7 @@
     id: "{{ unifi_apt_key_id }}"
     state: present
   register: add_unifi_apt_key
-  become: yes
+  become: true
 
 - name: add unifi repo
   ansible.builtin.apt_repository:
@@ -13,43 +13,43 @@
     filename: 100-ubnt-unifi
     state: present
   register: add_unifi_repo
-  become: yes
+  become: true
 
 - name: update repositories cache
   ansible.builtin.apt:
     update_cache: yes
-  become: yes
+  become: true
   when: add_unifi_apt_key.changed or add_unifi_repo.changed
 
 - name: install openjdk-8-jre-headless
   ansible.builtin.apt:
     name: openjdk-8-jre-headless
     state: present
-  become: yes
+  become: true
 
 - name: install unifi
   ansible.builtin.apt:
     name: unifi
     state: present
-  become: yes
+  become: true
 
 - name: enable unifi service
   ansible.builtin.systemd:
     name: unifi
     enabled: yes
-  become: yes
+  become: true
 
 - name: stop mongodb service
   ansible.builtin.systemd:
     name: mongodb
     state: stopped
-  become: yes
+  become: true
 
 - name: disable mongodb service
   ansible.builtin.systemd:
     name: mongodb
-    enabled: no
-  become: yes
+    enabled: false
+  become: true
   notify:
     - restart ubuntu
     - wait for ubuntu to restart

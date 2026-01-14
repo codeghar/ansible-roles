@@ -3,7 +3,7 @@
   ansible.builtin.dnf:
     name: nginx
     state: present
-  become: yes
+  become: true
 
 # http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
 - name: add text/x-rst mime type
@@ -13,7 +13,7 @@
     regexp: 'text/x-rst'
     insertbefore: '^}'
     state: present
-  become: yes
+  become: true
 
 # http://docutils.sourceforge.net/FAQ.html#what-s-the-official-mime-type-for-restructuredtext-data
 - name: add text/markdown mime type
@@ -23,7 +23,7 @@
     regexp: 'text/markdown'
     insertbefore: '^}'
     state: present
-  become: yes
+  become: true
 
 - name: append to text/plain mime type
   ansible.builtin.lineinfile:
@@ -31,7 +31,7 @@
     line: '    text/plain                                       txt log Dockerfile;'
     regexp: '    text/plain                                       txt'
     state: present
-  become: yes
+  become: true
 
 - name: copy stub_status config
   ansible.builtin.copy:
@@ -42,7 +42,7 @@
     mode: "u=rw,g=r,o=r"
     backup: yes
   register: nginx_conf_stub_status_update
-  become: yes
+  become: true
 
 - name: create directory /etc/systemd/system/nginx.service.d/
   ansible.builtin.file:
@@ -51,7 +51,7 @@
     mode: 0755
     owner: root
     group: root
-  become: yes
+  become: true
 
 - name: copy systemd override.conf config
   ansible.builtin.copy:
@@ -62,13 +62,13 @@
     mode: "u=rw,g=r,o=r"
     backup: yes
   register: nginx_conf_systemd_override_conf_update
-  when: ansible_service_mgr == "systemd"
-  become: yes
+  when: ansible_facts["service_mgr"] == "systemd"
+  become: true
 
 - name: enable and start nginx service systemd
   systemd:
     name: nginx
     enabled: yes
     state: started
-  when: ansible_service_mgr == "systemd"
-  become: yes
+  when: ansible_facts["service_mgr"] == "systemd"
+  become: true

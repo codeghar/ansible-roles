@@ -3,7 +3,7 @@
   ansible.builtin.group:
     name: "{{ username }}"
     state: present
-  become: yes
+  become: true
 
 - name: create jenkins ssh user
   ansible.builtin.user:
@@ -14,14 +14,14 @@
     append: yes
     update_password: "on_create"
     state: present
-  become: yes
+  become: true
 
 - name: add jenkins ssh user to docker group
   ansible.builtin.user:
     name: "{{ username }}"
     groups: docker
     append: yes
-  become: yes
+  become: true
   when: docker_installed == true
 
 - name: set SDKMAN_DIR environment variable system-wide
@@ -30,32 +30,32 @@
     state: present
     line: SDKMAN_DIR=/usr/local/sdkman
     regexp: "^SDKMAN_DIR=/usr/local/sdkman"
-  become: yes
+  become: true
 
 - name: download sdkman installer
   ansible.builtin.get_url:
     url: https://get.sdkman.io
     dest: /usr/local/bin/sdkman-installer.sh
     mode: 0755
-  become: yes
+  become: true
 
 - name: install unzip
   ansible.builtin.apt:
     name: unzip
     state: present
-  become: yes
+  become: true
 
 - name: install zip
   ansible.builtin.apt:
     name: zip
     state: present
-  become: yes
+  become: true
 
 - name: install curl
   ansible.builtin.apt:
     name: curl
     state: present
-  become: yes
+  become: true
 
 - name: install sdkman
   ansible.builtin.shell: /usr/local/bin/sdkman-installer.sh
@@ -64,7 +64,7 @@
     creates: /usr/local/sdkman/bin/sdkman-init.sh
   environment:
     SDKMAN_DIR: /usr/local/sdkman
-  become: yes
+  become: true
 
 - name: install java
   ansible.builtin.shell: . /usr/local/sdkman/bin/sdkman-init.sh && sdk install java "{{ java_version }}"
@@ -73,7 +73,7 @@
     creates: /usr/local/sdkman/candidates/java/
   environment:
     SDKMAN_DIR: /usr/local/sdkman
-  become: yes
+  become: true
 
 # These are the places where Jenkins 2.150.3 expects to find Java
 # - /home/jenkins/jdk/bin/java
@@ -89,7 +89,7 @@
     state: link
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
 
 - name: set JAVA_HOME environment variable system-wide
   ansible.builtin.lineinfile:
@@ -97,7 +97,7 @@
     state: present
     line: "JAVA_HOME=/usr/local/sdkman/candidates/java/current"
     regexp: "JAVA_HOME=/usr/local/sdkman/candidates/java/current"
-  become: yes
+  become: true
 
 - name: setup ssh public key
   ansible.posix.authorized_key:
@@ -105,8 +105,8 @@
     state: present
     key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
     path: "/etc/ssh/authorized_keys/{{ username }}"
-    manage_dir: no
-  become: yes
+    manage_dir: false
+  become: true
 
 - name: reconfigure sshd_config to add path to authorizedkeys directive
   ansible.builtin.blockinfile:
@@ -115,7 +115,7 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
       AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /home/%u/.ssh/authorized_keys
-  become: yes
+  become: true
   notify: restart sshd ubuntu
 
 - name: update customized PATH and JAVA_HOME in user profile
@@ -128,4 +128,4 @@
           PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
           JAVA_HOME="/usr/local/sdkman/candidates/java/current"
       fi
-  become: yes
+  become: true

@@ -3,11 +3,11 @@
   community.general.zypper:
     name: golang-github-prometheus-prometheus
     state: present
-  become: yes
+  become: true
 
 - name: Enable and start prometheus.service
   ansible.builtin.systemd:
     name: prometheus.service
     enabled: yes
     state: started
-  become: yes
+  become: true

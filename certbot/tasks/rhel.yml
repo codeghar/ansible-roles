@@ -3,33 +3,33 @@
   ansible.builtin.dnf:
     name: certbot
     state: present
-  become: yes
+  become: true
 
 - name: disable and stop certbot-renew.service
   ansible.builtin.systemd:
     name: certbot-renew.service
     state: stopped
     enabled: false
-  become: yes
+  become: true
 
 - name: install cronie
   ansible.builtin.dnf:
     name: cronie
     state: present
-  become: yes
+  become: true
 
 - name: install tar
   ansible.builtin.dnf:
     name: tar
     state: present
-  become: yes
+  become: true
 
 - name: crontab set shell
   ansible.builtin.cron:
     name: SHELL
     env: yes
     value: /bin/sh
-  become: yes
+  become: true
 
 - name: crontab set path
   ansible.builtin.cron:
@@ -37,7 +37,7 @@
     env: yes
     value: /etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
     insertafter: SHELL
-  become: yes
+  become: true
 
 - name: create directory /etc/letsencrypt/renewal-hooks/deploy/
   ansible.builtin.file:
@@ -46,7 +46,7 @@
     mode: 0755
     owner: root
     group: wheel
-  become: yes
+  become: true
 
 # Sources:
 # https://www.guyrutenberg.com/2017/01/01/lets-encrypt-reload-nginx-after-renewing-certificates/
@@ -58,6 +58,6 @@
     owner: root
     group: wheel
     mode: 0755
-  become: yes
+  become: true
   when:
     - nginx == true

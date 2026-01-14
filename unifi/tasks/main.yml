@@ -1,18 +1,18 @@
 ---
 - include_tasks: ubuntu-1804.yml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == false
 
 - include_tasks: ubuntu-1604.yml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "16.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "16.04"
     - undo == false
 
 - include_tasks: ubuntu-undo.yml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "16.04" or ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "16.04" or ansible_facts["distribution_version"] == "18.04"
     - undo == true

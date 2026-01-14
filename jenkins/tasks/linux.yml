@@ -3,7 +3,7 @@
   ansible.builtin.group:
     name: "{{ username }}"
     state: present
-  become: yes
+  become: true
 
 - name: create user jenkins
   ansible.builtin.user:
@@ -14,7 +14,7 @@
     append: yes
     update_password: "on_create"
     state: present
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create jenkins home directory
@@ -22,7 +22,7 @@
     path: /var/jenkins_home
     state: directory
     mode: 0777
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create init.groovy.d directory in jenkins home
@@ -30,7 +30,7 @@
     path: /var/jenkins_home/init.groovy.d
     state: directory
     mode: 0775
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: create plugins directory in jenkins home
@@ -38,7 +38,7 @@
     path: /var/jenkins_home/plugins
     state: directory
     mode: 0777
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy admin_user.groovy to init.groovy.d directory
@@ -48,7 +48,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy csrf.groovy to init.groovy.d directory
@@ -58,7 +58,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
 
 # Permissions need to be liberal so Jenkins in the container can work with this directory
 - name: copy harden.groovy to init.groovy.d directory
@@ -68,7 +68,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
 
 - name: create jenkins.model.JenkinsLocationConfiguration.xml in jenkins home
   ansible.builtin.template:
@@ -77,7 +77,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   notify: restart jenkins
 
 - name: create jenkins service configuration directory
@@ -85,7 +85,7 @@
     path: /srv/jenkins
     state: directory
     mode: 0755
-  become: yes
+  become: true
 
 - name: copy docker-compose.yml to jenkins service configuration directory
   ansible.builtin.copy:
@@ -94,7 +94,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   register: docker_compose_yml
 
 - name: create environment file in jenkins service configuration directory (used by jenkins.service)
@@ -104,7 +104,7 @@
     owner: root
     group: root
     mode: 0640
-  become: yes
+  become: true
   register: environment_file
 
 - name: copy jenkins.service to systemd directory
@@ -114,7 +114,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   register: jenkins_service_file
 
 - name: copy nginx.conf to jenkins service configuration directory
@@ -124,7 +124,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   register: nginx_conf
 
 - name: create certs directory in jenkins service configuration directory
@@ -132,7 +132,7 @@
     path: /srv/jenkins/certs
     state: directory
     mode: 0755
-  become: yes
+  become: true
 
 - name: copy chained.crt to certs directory
   ansible.builtin.copy:
@@ -141,7 +141,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   register: certificate_file
 
 - name: copy key.pem to certs directory
@@ -151,7 +151,7 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
   register: certificate_key_file
 
 - name: enable jenkins
@@ -160,7 +160,7 @@
     enabled: true
     daemon_reload: yes
   when: jenkins_service_file.changed
-  become: yes
+  become: true
 
 - name: restart jenkins
   ansible.builtin.systemd:
@@ -168,7 +168,7 @@
     state: restarted
     daemon_reload: yes
   when: docker_compose_yml.changed or environment_file.changed or jenkins_service_file.changed or nginx_conf.changed or certificate_file.changed or certificate_key_file.changed
-  become: yes
+  become: true
   register: jenkins_restart
 
 - name: wait for jenkins to be up
@@ -196,7 +196,7 @@
     force_basic_auth: yes
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
   notify: restart jenkins again
 
 - name: install role-strategy plugin
@@ -211,7 +211,7 @@
     force_basic_auth: yes
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
   notify: restart jenkins again
 
 - name: install ssh-slaves plugin
@@ -226,7 +226,7 @@
     force_basic_auth: yes
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
   notify: restart jenkins again
 
 - name: install blueocean plugin
@@ -241,7 +241,7 @@
     force_basic_auth: yes
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
   notify: restart jenkins again
 
 - name: install job-dsl plugin
@@ -256,5 +256,5 @@
     force_basic_auth: yes
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
   notify: restart jenkins again

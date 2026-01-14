@@ -5,13 +5,13 @@
   community.general.pkgng:
     name: bash
     state: present
-  become: yes
+  become: true
 
 - name: install openjdk 8
   community.general.pkgng:
     name: openjdk8
     state: present
-  become: yes
+  become: true
 
 - name: mount fdesc filesystem required by openjdk
   ansible.posix.mount:
@@ -22,7 +22,7 @@
     dump: "0"
     passno: "0"
     state: mounted
-  become: yes
+  become: true
 
 - name: mount proc filesystem required by openjdk
   ansible.posix.mount:
@@ -33,13 +33,13 @@
     dump: "0"
     passno: "0"
     state: mounted
-  become: yes
+  become: true
 
 - name: create jenkins ssh user's group
   ansible.builtin.group:
     name: "{{ username }}"
     state: present
-  become: yes
+  become: true
 
 - name: create jenkins ssh user
   ansible.builtin.user:
@@ -50,7 +50,7 @@
     append: yes
     update_password: "on_create"
     state: present
-  become: yes
+  become: true
 
 # These are the places where Jenkins 2.150.3 expects to find Java
 # - /home/jenkins/jdk/bin/java
@@ -66,7 +66,7 @@
     state: link
     owner: "{{ username }}"
     group: "{{ username }}"
-  become: yes
+  become: true
 
 - name: setup ssh public key
   ansible.posix.authorized_key:
@@ -74,8 +74,8 @@
     state: present
     key: "{{ lookup('file', '{{ role_path }}/files/key.pub') }}"
     path: "/etc/ssh/authorized_keys/{{ username }}"
-    manage_dir: no
-  become: yes
+    manage_dir: false
+  become: true
 
 - name: reconfigure sshd_config to add path to authorizedkeys directive
   ansible.builtin.blockinfile:
@@ -84,7 +84,7 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
       AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /usr/home/%u/.ssh/authorized_keys
-  become: yes
+  become: true
   notify: restart sshd freebsd
 
 - name: update customized JAVA_HOME in user profile
@@ -96,4 +96,4 @@
       if [ -d /usr/local/openjdk8 ]; then
           JAVA_HOME="/usr/local/openjdk8"
       fi
-  become: yes
+  become: true

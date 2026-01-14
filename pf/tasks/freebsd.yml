@@ -4,38 +4,38 @@
     src: server.pf.conf.j2
     dest: /etc/pf.conf
   register: pf_rules_updated
-  become: yes
+  become: true
 
 - name: enable pf
   ansible.builtin.shell: sysrc pf_enable="YES"
-  become: yes
+  become: true
 
 - name: set pf rules path
   ansible.builtin.shell: sysrc pf_rules="/etc/pf.conf"
-  become: yes
+  become: true
 
 - name: set pf flags
   ansible.builtin.shell: sysrc pf_flags=""
-  become: yes
+  become: true
 
 - name: enable pf log
   ansible.builtin.shell: sysrc pflog_enable="YES"
-  become: yes
+  become: true
 
 - name: set pf log path
   ansible.builtin.shell: sysrc pflog_logfile="/var/log/pflog"
-  become: yes
+  become: true
 
 - name: set pf log flags
   ansible.builtin.shell: sysrc pflog_flags=""
-  become: yes
+  become: true
 
 - name: reload pf
   ansible.builtin.shell: /sbin/pfctl -f /etc/pf.conf
   async: 5
   poll: 0
   register: pf_reloaded
-  become: yes
+  become: true
   when: pf_rules_updated.changed
 
 - name: wait for reconnection post pf restart

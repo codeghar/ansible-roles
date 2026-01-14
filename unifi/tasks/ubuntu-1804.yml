@@ -5,7 +5,7 @@
     id: "{{ mongodb_apt_key_id }}"
     state: present
   register: add_mongodb_apt_key
-  become: yes
+  become: true
 
 - name: add mongodb repo
   ansible.builtin.apt_repository:
@@ -13,7 +13,7 @@
     filename: 099-mongodb-org-server
     state: present
   register: add_mongodb_repo
-  become: yes
+  become: true
 
 - name: add unifi apt key
   ansible.builtin.apt_key:
@@ -21,19 +21,19 @@
     id: "{{ unifi_apt_key_id }}"
     state: present
   register: add_unifi_apt_key
-  become: yes
+  become: true
 
 - name: update repositories cache
   ansible.builtin.apt:
     update_cache: yes
-  become: yes
+  become: true
   when: add_mongodb_apt_key.changed or add_mongodb_repo.changed or add_unifi_apt_key.changed
 
 - name: install mongodb-org
   ansible.builtin.apt:
     name: mongodb-org
     state: present
-  become: yes
+  become: true
 
 - name: get unifi installer
   ansible.builtin.get_url:
@@ -45,7 +45,7 @@
     # name: unifi
     deb: /tmp/unifi_sysvinit_all.deb
     state: present
-  become: yes
+  become: true
 
 - name: reduce java xms in properties on raspberry pi 3
   ansible.builtin.lineinfile:
@@ -53,9 +53,9 @@
     state: present
     line: "unifi.xms=64"
     regexp: "unifi.xms=64"
-  become: yes
+  become: true
   when:
-    - ansible_architecture == "aarch64"
+    - ansible_facts["architecture"] == "aarch64"
 
 - name: reduce java xmx in properties on raspberry pi 3
   ansible.builtin.lineinfile:
@@ -63,36 +63,36 @@
     state: present
     line: "unifi.xmx=64"
     regexp: "unifi.xmx=64"
-  become: yes
+  become: true
   when:
-    - ansible_architecture == "aarch64"
+    - ansible_facts["architecture"] == "aarch64"
 
 - name: reduce java max heap size in init script on raspberry pi 3
   ansible.builtin.replace:
     path: /usr/lib/unifi/bin/unifi.init
     regexp: "JVM_MAX_HEAP_SIZE=1024M"
     replace: "JVM_MAX_HEAP_SIZE=64M"
-  become: yes
+  become: true
   when:
-    - ansible_architecture == "aarch64"
+    - ansible_facts["architecture"] == "aarch64"
 
 - name: enable unifi service
   ansible.builtin.systemd:
     name: unifi
     enabled: yes
-  become: yes
+  become: true
 
 - name: stop mongodb service
   ansible.builtin.systemd:
     name: mongod
     state: stopped
-  become: yes
+  become: true
 
 - name: disable mongodb service
   ansible.builtin.systemd:
     name: mongod
-    enabled: no
-  become: yes
+    enabled: false
+  become: true
   notify:
     - restart ubuntu
     - wait for ubuntu to restart

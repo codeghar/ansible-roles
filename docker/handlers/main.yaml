@@ -3,4 +3,4 @@
     name: snap.docker.dockerd
     state: restarted
     daemon_reload: yes
-  become: yes
+  become: true

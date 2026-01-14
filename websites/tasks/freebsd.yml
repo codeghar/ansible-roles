@@ -5,9 +5,9 @@
     dest: "/var/www/{{ domain_name }}/"
     mode: push
     recursive: yes
-    perms: no
+    perms: false
     use_ssh_args: yes
-  become: yes
+  become: true
 
 - name: "fix perms on {{ domain_name }} contents dir"
   ansible.builtin.file:
@@ -17,4 +17,4 @@
     owner: www
     group: www
     recurse: yes
-  become: yes
+  become: true

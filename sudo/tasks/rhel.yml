@@ -4,8 +4,8 @@
     name: sudo
     state: present
   when:
-    - ansible_distribution == "OracleLinux"
-  become: yes
+    - ansible_facts["distribution"] == "OracleLinux"
+  become: true
 
 - name: copy custom sudoers
   ansible.builtin.copy:
@@ -14,4 +14,4 @@
     owner: root
     group: root
     mode: 0640
-  become: yes
+  become: true

@@ -14,4 +14,4 @@
   ansible.builtin.hostname:
     name: "{{ preferred_hostname }}"
     use: systemd
-  become: yes
+  become: true

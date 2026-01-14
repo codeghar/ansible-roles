@@ -3,14 +3,14 @@
   community.general.pkgng:
     name: py38-certbot
     state: present
-  become: yes
+  become: true
 
 - name: crontab set shell
   ansible.builtin.cron:
     name: SHELL
     env: yes
     value: /bin/sh
-  become: yes
+  become: true
 
 - name: crontab set path
   ansible.builtin.cron:
@@ -18,7 +18,7 @@
     env: yes
     value: /etc:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
     insertafter: SHELL
-  become: yes
+  become: true
 
 - name: enable certbot renew cron job
   ansible.builtin.cron:
@@ -27,7 +27,7 @@
     weekday: "{{ cron_weekday }}"
     hour: "{{ cron_hour }}"
     minute: "{{ cron_minute }}"
-  become: yes
+  become: true
   when:
     - nginx == true
 
@@ -38,7 +38,7 @@
     mode: 0755
     owner: root
     group: wheel
-  become: yes
+  become: true
 
 # https://www.freebsd.org/doc/handbook/configtuning-syslog.html
 # https://www.freebsd.org/cgi/man.cgi?query=newsyslog.conf&sektion=5&manpath=freebsd-release-ports
@@ -49,7 +49,7 @@
     owner: root
     group: wheel
     mode: 0644
-  become: yes
+  become: true
 
 - name: create directory /usr/local/etc/letsencrypt/renewal-hooks/deploy/
   ansible.builtin.file:
@@ -58,7 +58,7 @@
     mode: 0755
     owner: root
     group: wheel
-  become: yes
+  become: true
 
 # Sources:
 # https://www.guyrutenberg.com/2017/01/01/lets-encrypt-reload-nginx-after-renewing-certificates/
@@ -70,6 +70,6 @@
     owner: root
     group: wheel
     mode: 0755
-  become: yes
+  become: true
   when:
     - nginx == true

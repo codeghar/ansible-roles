@@ -4,10 +4,10 @@
     name: pipenv
     executable: "/usr/bin/pip3"
     state: present
-  become: yes
+  become: true
 
 - name: install make
   ansible.builtin.apt:
     name: make
     state: present
-  become: yes
+  become: true

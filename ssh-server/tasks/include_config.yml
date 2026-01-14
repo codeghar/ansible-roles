@@ -10,7 +10,7 @@
     mode: 0755
   notify:
     - restart ssh service systemd
-  become: yes
+  become: true
 
 # The "Include ..." line MUST be towards the top of the file
 - name: include custom sshd config
@@ -20,6 +20,6 @@
     regexp: "^Include /etc/ssh/sshd_config.d"
     line: "Include /etc/ssh/sshd_config.d/*.conf"
     insertafter: "^#.*\\$OpenBSD.*"
-  become: yes
+  become: true
   notify:
     - restart ssh service systemd

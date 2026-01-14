@@ -5,41 +5,41 @@
     state: stopped
     daemon_reload: yes
   ignore_errors: yes
-  become: yes
+  become: true
 
 - name: remove jenkins service configuration directory
   ansible.builtin.file:
     path: /srv/jenkins
     state: absent
-  become: yes
+  become: true
 
 - name: remove jenkins home directory
   ansible.builtin.file:
     path: /var/jenkins_home
     state: absent
-  become: yes
+  become: true
 
 - name: remove user jenkins
   ansible.builtin.user:
     name: "{{ username }}"
     state: absent
     force: yes
-  become: yes
+  become: true
 
 - name: remove group jenkins
   ansible.builtin.group:
     name: "{{ username }}"
     state: absent
-  become: yes
+  become: true
 
 - name: remove jenkins.service from systemd directory
   ansible.builtin.file:
     path: /etc/systemd/system/jenkins.service
     state: absent
-  become: yes
+  become: true
   register: jenkins_service_removed
 
 - name: reload systemd config
   ansible.builtin.shell: "systemctl daemon-reload"
-  become: yes
+  become: true
   when: jenkins_service_removed.changed

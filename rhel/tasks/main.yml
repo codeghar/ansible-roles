@@ -20,14 +20,14 @@
   ansible.builtin.hostname:
     name: "{{ preferred_hostname }}"
     use: systemd
-  become: yes
+  become: true
 
 # https://docs.fedoraproject.org/en-US/quick-docs/dnf/#sect-plugins
 - name: install dnf core plugins
   ansible.builtin.dnf:
     name: dnf-plugins-core
     state: present
-  become: yes
+  become: true
 
 # https://docs.fedoraproject.org/en-US/quick-docs/dnf-system-upgrade/
 - name: install dnf-plugin-system-upgrade
@@ -35,16 +35,16 @@
     name: dnf-plugin-system-upgrade
     state: present
   when:
-  - ansible_distribution == "Fedora" and ansible_distribution_major_version == "36"
-  become: yes
+  - ansible_facts["distribution"] == "Fedora" and ansible_facts["distribution_major_version"] == "36"
+  become: true
 
 - name: install rpmconf
   ansible.builtin.dnf:
     name: rpmconf
     state: present
   when:
-  - ansible_distribution == "Fedora" and ansible_distribution_major_version == "36"
-  become: yes
+  - ansible_facts["distribution"] == "Fedora" and ansible_facts["distribution_major_version"] == "36"
+  become: true
 
 # - ansible.builtin.include_role:
 #     name: nginx

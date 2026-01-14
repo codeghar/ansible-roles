@@ -4,19 +4,19 @@
     name: docker-compose
     executable: "/usr/bin/pip3"
     state: absent
-  become: yes
+  become: true
 
 - name: uninstall docker-ce
   ansible.builtin.apt:
     name: docker-ce
     state: absent
-  become: yes
+  become: true
 
 - name: remove docker's apt repo
   ansible.builtin.apt_repository:
     repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
     state: absent
-  become: yes
+  become: true
   register: dockerreporemoved
 
 - name: remove docker's apt signing key
@@ -24,20 +24,20 @@
     id: "0EBFCD88"
     url: https://download.docker.com/linux/ubuntu/gpg
     state: absent
-  become: yes
+  become: true
   register: dockergpgkeyremoved
 
 - name: remove directory for docker config override
   ansible.builtin.file:
     path: /etc/systemd/system/docker.service.d
     state: absent
-  become: yes
+  become: true
 
 - name: update repositories cache
   ansible.builtin.apt:
     update_cache: yes
   when: dockerreporemoved.changed or dockergpgkeyremoved.changed
-  become: yes
+  become: true
 # Cannot remove user from a single group using Ansible
 # Bug is still open (as of 20019-01-10)
 # https://github.com/ansible/ansible/issues/11024

@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: sudo
     state: present
-  become: yes
+  become: true
 
 - name: copy custom sudoers
   ansible.builtin.copy:
@@ -12,4 +12,4 @@
     owner: root
     group: root
     mode: 0640
-  become: yes
+  become: true

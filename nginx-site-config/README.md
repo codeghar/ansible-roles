@@ -36,9 +36,9 @@ _CHANGEME.com_ and **must** be changed in the playbook.
 - index_pages - String that contains a space separated list of pages to
 consider as an
 [index page](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/#root).
-- os_family_lets_encrypt_path_prefix - Map of value of ansible_os_family to a
+- os_family_lets_encrypt_path_prefix - Map of value of ansible_facts["os_family"] to a
 directory path where Let's Encrypt configuration is stored.
-- os_family_nginx_path_prefix - Map of value of ansible_os_family to a
+- os_family_nginx_path_prefix - Map of value of ansible_facts["os_family"] to a
 directory path where website contents are stored.
 - redirect_domain - Optional string to use in nginx site config file when http
 must be redirected to https. Default value is an empty string.

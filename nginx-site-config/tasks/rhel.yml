@@ -6,13 +6,13 @@
     mode: 0755
     owner: nginx
     group: nginx
-  become: yes
+  become: true
 
 - name: find cert status
   ansible.builtin.shell: "ls /etc/letsencrypt/live/{{ domain_name }}/fullchain.pem"
   register: cert_status
   ignore_errors: true
-  become: yes
+  become: true
 
 - name: tls is enabled
   set_fact:
@@ -33,12 +33,12 @@
     mode: "u=rw,g=r,o=r"
     backup: yes
   register: site_config_copied
-  become: yes
+  become: true
 
 - name: reload nginx config
   ansible.builtin.shell: nginx -s reload
   when: site_config_copied.changed
-  become: yes
+  become: true
 
 - name: install lets encrypt dual-domain certificate
   ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_family_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }} -d www.{{ domain_name }}
@@ -47,7 +47,7 @@
   notify:
      - restart nginx
   when: site_has_www_domain == true
-  become: yes
+  become: true
 
 - name: install lets encrypt single-domain certificate
   ansible.builtin.command: certbot certonly -n --agree-tos -m {{ admin_email }} --webroot -w {{ os_family_nginx_path_prefix[ansible_os_family] }}/{{ domain_name }} -d {{ domain_name }}
@@ -56,7 +56,7 @@
   notify:
      - restart nginx
   when: site_has_www_domain == false
-  become: yes
+  become: true
 
 - name: tls is enabled
   set_fact:
@@ -73,9 +73,9 @@
     backup: yes
   when: certbot_install.changed
   register: site_config_copied_2
-  become: yes
+  become: true
 
 - name: reload nginx config
   ansible.builtin.shell: nginx -s reload
   when: site_config_copied_2.changed
-  become: yes
+  become: true

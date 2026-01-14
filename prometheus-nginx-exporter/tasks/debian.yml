@@ -3,7 +3,7 @@
   ansible.builtin.apt:
     name: prometheus-nginx-exporter
     state: present
-  become: yes
+  become: true
 
 - name: create directory /etc/systemd/system/nginx-prometheus-exporter.service.d/
   ansible.builtin.file:
@@ -12,7 +12,7 @@
     mode: 0755
     owner: root
     group: root
-  become: yes
+  become: true
 
 - name: copy systemd override.conf config
   ansible.builtin.copy:
@@ -23,12 +23,12 @@
     mode: "u=rw,g=r,o=r"
     backup: yes
   register: nginx_prom_exp_conf_systemd_override_conf_update
-  when: ansible_service_mgr == "systemd"
-  become: yes
+  when: ansible_facts["service_mgr"] == "systemd"
+  become: true
 
 - name: Enable and start prometheus-nginx-exporter.service
   ansible.builtin.systemd:
     name: prometheus-nginx-exporter.service
     enabled: yes
     state: started
-  become: yes
+  become: true

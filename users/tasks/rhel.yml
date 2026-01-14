@@ -5,4 +5,4 @@
     password: "{{ admin_password | password_hash('sha512', password_salt) }}"
     groups: wheel
     append: yes
-  become: yes
+  become: true

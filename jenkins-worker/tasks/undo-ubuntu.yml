@@ -9,26 +9,26 @@
           PATH="/usr/local/sdkman/candidates/java/current/bin:$PATH"
           JAVA_HOME="/usr/local/sdkman/candidates/java/current"
       fi
-  become: yes
+  become: true
 
 - name: remove jenkins ssh user
   ansible.builtin.user:
     name: "{{ username }}"
     state: absent
     force: yes
-  become: yes
+  become: true
 
 - name: remove group jenkins
   ansible.builtin.group:
     name: "{{ username }}"
     state: absent
-  become: yes
+  become: true
 
 - name: remove jenkins ssh authorized keys
   ansible.builtin.file:
     name: "/etc/ssh/authorized_keys/{{ username }}"
     state: absent
-  become: yes
+  become: true
 
 - name: reconfigure sshd_config to remove path to authorizedkeys directive
   ansible.builtin.blockinfile:
@@ -37,7 +37,7 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK"
     block: |
       AuthorizedKeysFile /etc/ssh/authorized_keys/%u .ssh/authorized_keys /home/%u/.ssh/authorized_keys
-  become: yes
+  become: true
   notify: restart sshd ubuntu
 
 - name: remove JAVA_HOME environment variable system-wide
@@ -45,16 +45,16 @@
     path: /etc/environment
     state: absent
     regexp: "JAVA_HOME='/usr/local/sdkman/candidates/java/current'"
-  become: yes
+  become: true
 
 - name: remove sdkman directory
   ansible.builtin.file:
     name: /usr/local/sdkman
     state: absent
-  become: yes
+  become: true
 
 - name: remove sdkman installer
   ansible.builtin.file:
     name: /usr/local/bin/sdkman-installer.sh
     state: absent
-  become: yes
+  become: true

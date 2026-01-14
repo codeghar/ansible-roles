@@ -4,13 +4,13 @@
     name:
       - docker
     state: absent
-  become: yes
+  become: true
 
 - name: remove directory for docker config override
   ansible.builtin.file:
     path: /etc/systemd/system/snap.docker.dockerd.d
     state: absent
-  become: yes
+  become: true
 # Cannot remove user from a single group using Ansible
 # Bug is still open (as of 20019-01-10)
 # https://github.com/ansible/ansible/issues/11024

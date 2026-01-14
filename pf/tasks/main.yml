@@ -1,8 +1,8 @@
 ---
 - include_tasks: freebsd.yml
   when:
-    - ansible_system == "FreeBSD"
+    - ansible_facts["system"] == "FreeBSD"
 
 - include_tasks: openbsd.yml
   when:
-    - ansible_system == "OpenBSD"
+    - ansible_facts["system"] == "OpenBSD"

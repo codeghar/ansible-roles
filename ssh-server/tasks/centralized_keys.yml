@@ -8,7 +8,7 @@
     mode: 0755
   notify:
     - restart ssh service systemd
-  become: yes
+  become: true
 
 - name: enable centralized authorized_keys
   ansible.builtin.copy:
@@ -19,7 +19,7 @@
     mode: 0660
   notify:
     - restart ssh service systemd
-  become: yes
+  become: true
 
 - name: distribute centralized authorized_keys
   template:
@@ -29,4 +29,4 @@
     group: root
     mode: 0644
   with_items: "{{ centralized_ssh_user_keys }}"
-  become: yes
+  become: true

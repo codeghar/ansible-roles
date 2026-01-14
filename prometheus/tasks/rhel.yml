@@ -3,7 +3,7 @@
   ansible.builtin.dnf:
     name: golang-github-prometheus
     state: present
-  become: yes
+  become: true
 
 - name: Configure prometheus.yml
   template:
@@ -13,11 +13,11 @@
     owner: root
     group: root
     mode: 0644
-  become: yes
+  become: true
 
 - name: Enable and start prometheus.service
   ansible.builtin.systemd:
     name: prometheus.service
     enabled: yes
     state: started
-  become: yes
+  become: true

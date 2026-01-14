@@ -3,19 +3,19 @@
   ansible.builtin.dnf:
     name: golang-github-prometheus-node-exporter
     state: present
-  become: yes
+  become: true
   when:
-    - ansible_distribution_major_version == "8" or ansible_distribution_major_version == "9" or ansible_distribution_major_version == "10"
-    - ansible_os_family == "RedHat"
+    - ansible_facts["distribution_major_version"] == "8" or ansible_facts["distribution_major_version"] == "9" or ansible_facts["distribution_major_version"] == "10"
+    - ansible_facts["os_family"] == "RedHat"
 
 - name: Install Prometheus Node Exporter (Fedora)
   ansible.builtin.dnf:
     name: node-exporter
     state: present
-  become: yes
+  become: true
   when:
-    - ansible_distribution_major_version == "36" or ansible_distribution_major_version == "43"
-    - ansible_os_family == "RedHat"
+    - ansible_facts["distribution_major_version"] == "36" or ansible_facts["distribution_major_version"] == "43"
+    - ansible_facts["os_family"] == "RedHat"
 
 - block:
 
@@ -75,7 +75,7 @@
   ignore_errors: true
   when:
     - prom_node_exporter_enable_tls
-  become: yes
+  become: true
 
 - name: Enable and start prometheus-node-exporter.service
   ansible.builtin.systemd:
@@ -83,7 +83,7 @@
     enabled: yes
     state: started
   register: prom_svc_modified
-  become: yes
+  become: true
 
 - name: Restart prometheus-node-exporter.service
   ansible.builtin.systemd:
@@ -94,4 +94,4 @@
     - prom_tls_enabled is defined
     - prom_tls_enabled.changed
     - not prom_svc_modified.changed
-  become: yes
+  become: true

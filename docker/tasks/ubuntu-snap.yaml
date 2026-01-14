@@ -4,14 +4,14 @@
     name: docker
     state: present
     system: yes
-  become: yes
+  become: true
 
 - name: add user to docker group
   ansible.builtin.user:
     append: yes
     groups: docker
     name: "{{ ansible_user_id }}"
-  become: yes
+  become: true
 
 # https://superuser.com/a/1432977
 - name: enable listen on tcp
@@ -22,7 +22,7 @@
     regexp: "^ExecStart=/usr/bin/snap run docker.dockerd$"
   when:
     - listen_tcp == true
-  become: yes
+  become: true
   notify: restart docker snap
 
 - name: disable listen on tcp
@@ -33,7 +33,7 @@
     regexp: "^ExecStart=/usr/bin/snap run docker.dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375$"
   when:
     - listen_tcp == false
-  become: yes
+  become: true
   notify: restart docker snap
 
 - name: install docker from snap store
@@ -41,4 +41,4 @@
     name:
       - docker
     state: present
-  become: yes
+  become: true

@@ -1,7 +1,7 @@
 ---
 - name: create admin user
   ansible.builtin.shell: "yast users add username='{{ admin_user }}' password='{{ admin_password }}' grouplist='users,wheel'"
-  become: yes
+  become: true
   when: suse_prefer_yast == yes
 
 - name: create admin user
@@ -10,5 +10,5 @@
     password: "{{ admin_password | password_hash('sha512', password_salt) }}"
     groups: users,wheel
     append: yes
-  become: yes
+  become: true
   when: suse_prefer_yast == no

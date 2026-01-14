@@ -8,4 +8,4 @@
     mode: 0660
   notify:
     - restart ssh service systemd
-  become: yes
+  become: true

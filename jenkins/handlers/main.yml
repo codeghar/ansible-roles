@@ -6,7 +6,7 @@
       daemon_reload: yes
   notify:
     - wait for jenkins to be up again
-  become: yes
+  become: true
 
 - name: wait for jenkins to be up again
   ansible.builtin.uri:

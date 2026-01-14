@@ -1,34 +1,34 @@
 ---
 - include_tasks: ubuntu.yml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == false
     - use_snap == false
 
 - include_tasks: ubuntu-snap.yaml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == false
     - use_snap == true
 
 - include_tasks: ubuntu-post.yaml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == false
 
 - include_tasks: undo-ubuntu.yml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == true
     - use_snap == false
 
 - include_tasks: undo-ubuntu-snap.yaml
   when:
-    - ansible_distribution == "Ubuntu"
-    - ansible_distribution_version == "18.04"
+    - ansible_facts["distribution"] == "Ubuntu"
+    - ansible_facts["distribution_version"] == "18.04"
     - undo == true
     - use_snap == true

@@ -3,21 +3,21 @@
 - name: enable powertools
   command: dnf config-manager --set-enabled powertools
   when:
-    - ansible_distribution == "Rocky" or ansible_distribution == "AlmaLinux"
-  become: yes
+    - ansible_facts["distribution"] == "Rocky" or ansible_facts["distribution"] == "AlmaLinux"
+  become: true
 
 - name: enable ol9_developer_EPEL
   command: dnf config-manager --set-enabled ol9_developer_EPEL
   when:
-    - ansible_distribution == "OracleLinux"
-  become: yes
+    - ansible_facts["distribution"] == "OracleLinux"
+  become: true
 
 - name: install epel-release
   ansible.builtin.dnf:
     name: epel-release
     state: present
-  become: yes
+  become: true
 
 - name: setup epel
   command: dnf update -y
-  become: yes
+  become: true
