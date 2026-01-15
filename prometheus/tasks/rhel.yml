@@ -14,6 +14,28 @@
     group: root
     mode: 0644
   become: true
+  notify:
+    - reload prometheus.service
+
+- name: Disable and stop cockpit.service
+  ansible.builtin.systemd:
+    name: cockpit.service
+    enabled: false
+    state: stopped
+  become: true
+  when:
+    - ansible_facts["distribution_major_version"] == "43"
+    - ansible_facts["os_family"] == "RedHat"
+
+- name: Disable and stop cockpit.socket
+  ansible.builtin.systemd:
+    name: cockpit.socket
+    enabled: false
+    state: stopped
+  become: true
+  when:
+    - ansible_facts["distribution_major_version"] == "43"
+    - ansible_facts["os_family"] == "RedHat"
 
 - name: Enable and start prometheus.service
   ansible.builtin.systemd:

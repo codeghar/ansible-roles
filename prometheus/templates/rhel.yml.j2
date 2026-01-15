@@ -43,12 +43,24 @@ scrape_configs:
     static_configs:
       - targets:
           - 'localhost:9100'
+
+  - job_name: node_remote
+    # If prometheus-node-exporter is installed, grab stats about the local
+    # machine by default.
+{% if node_targets_tls | default(false) %}
+    scheme: https
+{% endif %}
+    static_configs:
+      - targets:
 {% for target in node_targets %}
           - '{{ target }}'
 {% endfor %}
 
-{% if nginx_targets|length %}
+{% if nginx_targets|length > 0 %}
   - job_name: nginx
+{% if nginx_targets_tls | default(false) %}
+    scheme: https
+{% endif %}
     static_configs:
       - targets:
 {% for target in nginx_targets %}
