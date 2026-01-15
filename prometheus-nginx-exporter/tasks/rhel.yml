@@ -36,9 +36,9 @@
   when: ansible_facts["service_mgr"] == "systemd"
   become: true
 
-- name: Enable and start prometheus-nginx-exporter.service
+- name: Enable and start nginx-prometheus-exporter.service
   ansible.builtin.systemd:
-    name: prometheus-nginx-exporter.service
+    name: nginx-prometheus-exporter.service
     enabled: yes
     state: started
   become: true
