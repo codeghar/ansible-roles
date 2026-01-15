@@ -5,16 +5,17 @@
     state: present
   become: true
   when:
-    - ansible_facts["distribution_major_version"] == "8" or ansible_facts["distribution_major_version"] == "9" or ansible_facts["distribution_major_version"] == "10"
+    - ansible_facts["distribution_major_version"] == "8"
     - ansible_facts["os_family"] == "RedHat"
 
-- name: Install Prometheus Node Exporter (Fedora)
+# Requires EPEL for RHEL or clones
+- name: Install Prometheus Node Exporter
   ansible.builtin.dnf:
     name: node-exporter
     state: present
   become: true
   when:
-    - ansible_facts["distribution_major_version"] == "36" or ansible_facts["distribution_major_version"] == "43"
+    - ansible_facts["distribution_major_version"] == "9" or ansible_facts["distribution_major_version"] == "10" or ansible_facts["distribution_major_version"] == "36" or ansible_facts["distribution_major_version"] == "43"
     - ansible_facts["os_family"] == "RedHat"
 
 - block:
@@ -61,7 +62,7 @@
       ansible.builtin.lineinfile:
         path: /etc/default/prometheus-node-exporter
         regexp: "^ARGS=''"
-        line: "ARGS='--web.config /usr/local/etc/prometheus_node_exporter_web_config.yml'"
+        line: "ARGS='--web.config.file=/usr/local/etc/prometheus_node_exporter_web_config.yml'"
       register: prom_tls_enabled
 
     - name: Configure certbot renewal hook for prometheus-node-exporter.service
